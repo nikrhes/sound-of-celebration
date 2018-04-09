@@ -1,0 +1,34 @@
+{
+    "properties": [
+        {
+            "name": "acn.uxp.host",
+            "type": "java.lang.String",
+            "description": ""
+        },
+        {
+            "name": "acn.uxp.protocol",
+            "type": "java.lang.String",
+            "description": ""
+        },
+        {
+            "name": "acn.uxp.port",
+            "type": "java.lang.String",
+            "description": ""
+        },
+        {
+            "name": "acn.finnet.host",
+            "type": "java.lang.String",
+            "description": ""
+        },
+        {
+            "name": "acn.finnet.protocol",
+            "type": "java.lang.String",
+            "description": ""
+        },
+        {
+            "name": "acn.finnet.port",
+            "type": "java.lang.String",
+            "description": ""
+        }
+    ]
+}
