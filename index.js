@@ -106,7 +106,7 @@ function handleText(message, replyToken, source) {
 
   switch (message.text.toLowerCase()) {
     case 'profile':
-      handleCaseProfile();
+      handleCaseProfile(replyToken, source);
     case 'buttons':
       return client.replyMessage(
         replyToken,
@@ -350,7 +350,7 @@ function handleSticker(message, replyToken) {
   );
 }
 
-function handleCaseProfile() {
+function handleCaseProfile(replyToken, source) {
   if (source.userId) {
     return client.getProfile(source.userId)
       .then((profile) => replyText(
