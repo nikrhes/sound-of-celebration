@@ -104,20 +104,9 @@ function handleEvent(event) {
 function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
-  switch (message.text) {
+  switch (message.text.toLowerCase()) {
     case 'profile':
-      if (source.userId) {
-        return client.getProfile(source.userId)
-          .then((profile) => replyText(
-            replyToken,
-            [
-              `Display name: ${profile.displayName}`,
-              `Status message: ${profile.statusMessage}`,
-            ]
-          ));
-      } else {
-        return replyText(replyToken, 'Bot can\'t use profile API without user ID');
-      }
+      this.handleCaseProfile();
     case 'buttons':
       return client.replyMessage(
         replyToken,
@@ -359,6 +348,26 @@ function handleSticker(message, replyToken) {
       stickerId: message.stickerId,
     }
   );
+}
+
+function handleCaseProfile() {
+  if (source.userId) {
+    return client.getProfile(source.userId)
+      .then((profile) => replyText(
+        replyToken,
+        [
+          `Display name: ${profile.displayName}`,
+          `Status message: ${profile.statusMessage}`,
+          {
+            type: 'sticker',
+            packageId: 1073,
+            stickerId: 17961,
+          }
+        ]
+      ));
+  } else {
+    return replyText(replyToken, 'Bot can\'t use profile API without user ID');
+  }
 }
 
 // listen on port
