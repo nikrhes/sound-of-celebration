@@ -107,7 +107,7 @@ function handleText(message, replyToken, source) {
   switch (message.text.toLowerCase()) {
     case 'profile':
       if (source.userId) {
-        return client.getProfile(source.userId)
+        /* return client.getProfile(source.userId)
           .then((profile) => replyText(
             replyToken,
             [
@@ -119,7 +119,26 @@ function handleText(message, replyToken, source) {
                 stickerId: 17961,
               }
             ]
-          ));
+          )); */
+          return client.getProfile(source.userId)
+          .then((profile) => {
+            client.replyMessage(
+              replyToken,
+              {
+                type: `text`,
+                text: `Display name: ${profile.displayName}`,
+              },
+              {
+                type: `text`,
+                text: `Status message: ${profile.statusMessage}`,
+              }, 
+              {
+                type: 'sticker',
+                packageId: 1073,
+                stickerId: 17961,
+              }
+            )
+          });
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
       }
