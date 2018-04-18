@@ -106,7 +106,7 @@ function handleText(message, replyToken, source) {
 
   switch (message.text.toLowerCase()) {
     case 'profile':
-      this.handleCaseProfile();
+      handleCaseProfile();
     case 'buttons':
       return client.replyMessage(
         replyToken,
