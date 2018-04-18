@@ -106,7 +106,7 @@ function handleText(message, replyToken, source) {
 
   switch (message.text.toLowerCase()) {
     case 'profile':
-      handleCaseProfile(replyToken, source);
+      return handleCaseProfile(replyToken, source);
     case 'buttons':
       return client.replyMessage(
         replyToken,
@@ -352,7 +352,7 @@ function handleSticker(message, replyToken) {
 
 function handleCaseProfile(replyToken, source) {
   if (source.userId) {
-    return client.getProfile(source.userId)
+    client.getProfile(source.userId)
       .then((profile) => replyText(
         replyToken,
         [
@@ -366,7 +366,7 @@ function handleCaseProfile(replyToken, source) {
         ]
       ));
   } else {
-    return replyText(replyToken, 'Bot can\'t use profile API without user ID');
+    replyText(replyToken, 'Bot can\'t use profile API without user ID');
   }
 }
 
