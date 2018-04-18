@@ -106,7 +106,23 @@ function handleText(message, replyToken, source) {
 
   switch (message.text.toLowerCase()) {
     case 'profile':
-      return handleCaseProfile(replyToken, source);
+      if (source.userId) {
+        return client.getProfile(source.userId)
+          .then((profile) => replyText(
+            replyToken,
+            [
+              `Display name: ${profile.displayName}`,
+              `Status message: ${profile.statusMessage}`,
+              {
+                type: 'sticker',
+                packageId: 1073,
+                stickerId: 17961,
+              }
+            ]
+          ));
+      } else {
+        return replyText(replyToken, 'Bot can\'t use profile API without user ID');
+      }
     case 'buttons':
       return client.replyMessage(
         replyToken,
@@ -348,26 +364,6 @@ function handleSticker(message, replyToken) {
       stickerId: message.stickerId,
     }
   );
-}
-
-function handleCaseProfile(replyToken, source) {
-  if (source.userId) {
-    client.getProfile(source.userId)
-      .then((profile) => replyText(
-        replyToken,
-        [
-          `Display name: ${profile.displayName}`,
-          `Status message: ${profile.statusMessage}`,
-          {
-            type: 'sticker',
-            packageId: 1073,
-            stickerId: 17961,
-          }
-        ]
-      ));
-  } else {
-    replyText(replyToken, 'Bot can\'t use profile API without user ID');
-  }
 }
 
 // listen on port
