@@ -5,8 +5,6 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
 // create LINE SDK config from env variables
 const config = {
@@ -15,7 +13,7 @@ const config = {
 };
 
 // base URL for webhook server
-const baseURL = 'https://sound-of-celebration.herokuapp.com';
+const baseURL = process.env.BASE_URL;
 
 // create LINE SDK client
 const client = new line.Client(config);
@@ -59,7 +57,14 @@ const multiReply = (token, objects) => {
   objects = Array.isArray(objects) ? objects : [objects];
   return client.replyMessage(
     token,
-    objects.map((object) => ({ object }))
+    objects.map((object) => {
+      if(object.type == 'text') {
+        type: 'text',
+        object.text
+      } else {
+        object
+      }
+    })
   );
 }
 
@@ -113,11 +118,25 @@ function handleEvent(event) {
 }
 
 function handleText(message, replyToken, source) {
-  const buttonsImageURL = baseURL + '/static/buttons/1040.jpg';
+  const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   switch (message.text.toLowerCase()) {
     case 'profile':
       if (source.userId) {
+        /* return client.getProfile(source.userId)
+          .then((profile) => replyText(
+            replyToken,
+            [
+              `Display name: ${profile.displayName}`,
+              `Status message: ${profile.statusMessage}`,
+              {
+                type: 'sticker',
+                packageId: 1073,
+                stickerId: 17961,
+              }
+            ]
+          )); */
+
         return client.getProfile(source.userId)
           .then((profile) => multiReply(
             replyToken, [
@@ -261,7 +280,7 @@ function handleText(message, replyToken, source) {
         replyToken,
         {
           type: 'imagemap',
-          baseUrl: baseURL + '/static/rich',
+          baseUrl: `${baseURL}/static/rich`,
           altText: 'Imagemap alt text',
           baseSize: { width: 1040, height: 1040 },
           actions: [
