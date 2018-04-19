@@ -54,6 +54,15 @@ const replyText = (token, texts) => {
   );
 };
 
+// complex reply function
+const multiReply = (token, objects) => {
+  objects = Array.isArray(objects) ? objects : [objects];
+  return client.replyMessage(
+    token,
+    objects.map((object) => ({ object }))
+  );
+}
+
 // callback function to handle a single event
 function handleEvent(event) {
   switch (event.type) {
@@ -109,38 +118,23 @@ function handleText(message, replyToken, source) {
   switch (message.text.toLowerCase()) {
     case 'profile':
       if (source.userId) {
-        /* return client.getProfile(source.userId)
-          .then((profile) => replyText(
-            replyToken,
-            [
-              `Display name: ${profile.displayName}`,
-              `Status message: ${profile.statusMessage}`,
-              {
-                type: 'sticker',
-                packageId: 1073,
-                stickerId: 17961,
-              }
-            ]
-          )); */
-          return client.getProfile(source.userId)
-          .then((profile) => {
-            client.replyMessage(
-              replyToken,
-              Array({
-                type: `text`,
-                text: `Display name: ${profile.displayName}`,
-              },
-              {
-                type: `text`,
-                text: `Status message: ${profile.statusMessage}`,
-              }, 
-              {
-                type: 'sticker',
-                packageId: 1073,
-                stickerId: 17961,
-              })
-            )
-          });
+        return client.getProfile(source.userId)
+          .then((profile) => multiReply(
+            replyToken, [
+            {
+              type: 'text',
+              text: `Display name: ${profile.displayName}`,
+            },
+            {
+              type: 'text',
+              text: `Status message: ${profile.statusMessage}`,
+            },
+            {
+              type: 'sticker',
+              packageId: 1073,
+              stickerId: 17961,
+            }]
+          ));
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
       }
