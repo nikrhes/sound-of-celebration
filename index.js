@@ -124,22 +124,24 @@ function handleText(message, replyToken, source) {
           )); */
           return client.getProfile(source.userId)
           .then((profile) => {
-            client.replyMessage(
-              replyToken,
-              [{
-                type: `text`,
-                text: `Display name: ${profile.displayName}`,
-              },
-              {
-                type: `text`,
-                text: `Status message: ${profile.statusMessage}`,
-              }, 
-              {
-                type: 'sticker',
-                packageId: 1073,
-                stickerId: 17961,
-              }]
-            )
+            client.replyMessage({
+              'replyToken': replyToken,
+              'messages': [
+                {
+                  type: `text`,
+                  text: `Display name: ${profile.displayName}`,
+                },
+                {
+                  type: `text`,
+                  text: `Status message: ${profile.statusMessage}`,
+                }, 
+                {
+                  type: 'sticker',
+                  packageId: 1073,
+                  stickerId: 17961,
+                }
+              ]
+            })
           });
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
