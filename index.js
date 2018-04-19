@@ -58,6 +58,9 @@ const multiReply = (token, objects) => {
   return client.replyMessage(
     token,
     objects.map((object) => {
+      console.log(object);
+      console.log(object.type);
+      console.log(object.text);
       if(object.type == 'text') {
         type: 'text',
         object.text
@@ -153,7 +156,7 @@ function handleText(message, replyToken, source) {
                 packageId: 1073,
                 stickerId: 17961,
               } */
-              {
+              /* {
                 type: 'template',
                 altText: 'asking',
                 template: {
@@ -164,7 +167,7 @@ function handleText(message, replyToken, source) {
                     { label: 'Yes', type: 'message', text: 'Yes!' },
                   ],
                 },
-              }
+              } */
             ]
           ));
       } else {
