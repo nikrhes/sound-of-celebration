@@ -124,7 +124,7 @@ function handleText(message, replyToken, source) {
           .then((profile) => {
             client.replyMessage(
               replyToken,
-              {
+              [{
                 type: `text`,
                 text: `Display name: ${profile.displayName}`,
               },
@@ -136,7 +136,7 @@ function handleText(message, replyToken, source) {
                 type: 'sticker',
                 packageId: 1073,
                 stickerId: 17961,
-              }
+              }]
             )
           });
       } else {
