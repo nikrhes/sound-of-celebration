@@ -140,19 +140,32 @@ function handleText(message, replyToken, source) {
         return client.getProfile(source.userId)
           .then((profile) => multiReply(
             replyToken, [
-            {
-              type: 'text',
-              text: `Display name: ${profile.displayName}`,
-            },
-            {
-              type: 'text',
-              text: `Status message: ${profile.statusMessage}`,
-            },
-            {
-              type: 'sticker',
-              packageId: 1073,
-              stickerId: 17961,
-            }]
+              {
+                type: 'text',
+                text: `Display name: ${profile.displayName}`,
+              },
+              {
+                type: 'text',
+                text: `Status message: ${profile.statusMessage}`,
+              },
+              /* {
+                type: 'sticker',
+                packageId: 1073,
+                stickerId: 17961,
+              } */
+              {
+                type: 'template',
+                altText: 'asking',
+                template: {
+                  type: 'confirm',
+                  text: 'Am i Clever?',
+                  actions: [
+                    { label: 'Absolutely', type: 'message', text: 'Absolutely!' },
+                    { label: 'Yes', type: 'message', text: 'Yes!' },
+                  ],
+                },
+              }
+            ]
           ));
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
