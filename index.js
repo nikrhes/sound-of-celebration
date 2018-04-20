@@ -5,6 +5,8 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 // create LINE SDK config from env variables
 const config = {
