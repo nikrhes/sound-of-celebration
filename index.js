@@ -202,8 +202,8 @@ function handleText(message, replyToken, source) {
             columns: [
               {
                 thumbnailImageUrl: buttonsImageURL,
-                title: 'Sound of Celebration',
-                text: 'Heroes Quest',
+                title: 'Heroes Quest',
+                text: 'Finish to quest to find the missing heroes!',
                 actions: [
                   { label: 'Start Quest', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
                   { label: 'Say message', type: 'message', text: 'Rice=米' },
@@ -211,8 +211,8 @@ function handleText(message, replyToken, source) {
               },
               {
                 thumbnailImageUrl: buttonsImageURL,
-                title: 'Sound of Celebration',
-                text: 'Event Informations',
+                title: 'Event Information',
+                text: 'Discover the fun!',
                 actions: [
                   { label: '言 hello2', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
                   { label: 'Say message', type: 'message', text: 'Rice=米' },
