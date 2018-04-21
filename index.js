@@ -132,11 +132,11 @@ function handleText(message, replyToken, source) {
       if (source.userId) {
         return client.getProfile(source.userId)
           .then((profile) => {
-            storage = profile;
+            storage.push(profile);
             replyText(
               replyToken,
               [
-                `Hi ${profile.displayName},`,
+                `Hi ${profile.displayName}`,
                 `Have a great harmony today!`
               ]
             )
