@@ -74,6 +74,10 @@ const multiReply = (token, objects) => {
   );
 }
 
+// =================================== Global Var ================================
+var isPostBack = false;
+// ===============================================================================
+
 // callback function to handle a single event
 function handleEvent(event) {
   switch (event.type) {
@@ -125,7 +129,9 @@ function handleEvent(event) {
 
 function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
-
+  if(isPostBack){
+    return;
+  }
   var msg = message.text.toLowerCase();
   storage.push(msg);
   switch (msg) {
