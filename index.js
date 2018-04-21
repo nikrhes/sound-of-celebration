@@ -206,7 +206,7 @@ function handleText(message, replyToken, source) {
         replyToken,
         {
           type: 'template',
-          altText: 'Carousel alt text',
+          altText: 'Main Menu',
           template: {
             type: 'carousel',
             columns: [
