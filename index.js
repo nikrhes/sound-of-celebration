@@ -127,17 +127,18 @@ function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   var msg = message.text.toLowerCase();
+  let currentThis = this;
   switch (msg) {
     case 'profile':
       if (source.userId) {
         return client.getProfile(source.userId)
           .then((profile) => {
-            storage.push(profile);
-            console.log(storage);
+            currentThis.storage.push(profile);
+            console.log(currentThis.storage);
             replyText(
               replyToken,
               [
-                `Hi ${profile.displayName} \n Have a great melody today!`
+                `Hi ${profile.displayName}\n Have a great melody today!`
               ]
             )
           });
@@ -315,7 +316,7 @@ function handleText(message, replyToken, source) {
       if(!hasTeam)
         return replyText(replyToken, "Silahkan masukkan nama team terlebih dahulu (ketik profile)");
       else
-        return replyText(replyToken, "Silahkan masukkan jawaban kamu. \n INGAT! Kami hanya menerima jawaban pertama ya");
+        return replyText(replyToken, "Silahkan masukkan jawaban kamu.\n INGAT! Kami hanya menerima jawaban pertama ya");
     case 'delete storage':
       storage = [];
       return replyText(replyToken, "Storage sudah bersih");
@@ -325,8 +326,8 @@ function handleText(message, replyToken, source) {
       else
         return replyText(replyToken, storage);
     default: {
-      storage.push(msg);
-      console.log(storage);
+      currentThis.storage.push(msg);
+      console.log(currentThis.storage);
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       // if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
         return client.replyMessage(
