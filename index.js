@@ -127,14 +127,12 @@ function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   var msg = message.text.toLowerCase();
-  let currentThis = this;
+  storage.push(msg);
   switch (msg) {
     case 'profile':
       if (source.userId) {
         return client.getProfile(source.userId)
           .then((profile) => {
-            currentThis.storage.push(profile);
-            console.log(currentThis.storage);
             replyText(
               replyToken,
               [
@@ -326,8 +324,6 @@ function handleText(message, replyToken, source) {
       else
         return replyText(replyToken, storage);
     default: {
-      currentThis.storage.push(msg);
-      console.log(currentThis.storage);
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       // if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
         return client.replyMessage(
