@@ -75,12 +75,20 @@ const multiReply = (token, objects) => {
 }
 
 // =================================== Global Var ================================
-var isPostBack = false;
+
 // ===============================================================================
 
 // callback function to handle a single event
 function handleEvent(event) {
   switch (event.type) {
+    case 'postback':{
+      let data = event.postback.data;
+      if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
+        data += `(${JSON.stringify(event.postback.params)})`;
+      }
+      // return replyText(event.replyToken, `Got postback: ${data}`);
+      break;
+    }
     case 'message':
       const message = event.message;
       switch (message.type) {
@@ -99,7 +107,6 @@ function handleEvent(event) {
         default:
           throw new Error(`Unknown message: ${JSON.stringify(message)}`);
       }
-
     case 'follow':
       return replyText(event.replyToken, 'Got followed event');
 
@@ -112,13 +119,7 @@ function handleEvent(event) {
     case 'leave':
       return console.log(`Left: ${JSON.stringify(event)}`);
 
-    case 'postback':
-      let data = event.postback.data;
-      if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
-        data += `(${JSON.stringify(event.postback.params)})`;
-      }
-      // return replyText(event.replyToken, `Got postback: ${data}`);
-
+  
     case 'beacon':
       return replyText(event.replyToken, `Got beacon: ${event.beacon.hwid}`);
 
