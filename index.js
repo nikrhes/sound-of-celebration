@@ -203,10 +203,9 @@ function handleText(message, replyToken, source) {
               {
                 thumbnailImageUrl: buttonsImageURL,
                 title: 'Sound of Celebration',
-                text: 'Main Menu',
+                text: 'Heroes Quest',
                 actions: [
-                  { label: 'Go to line.me', type: 'uri', uri: 'https://line.me' },
-                  { label: 'Say hello1', type: 'postback', data: 'hello こんにちは' },
+                  { label: 'Start Quest', type: 'postback', data: 'start quest' }
                 ],
               },
               {
@@ -325,7 +324,8 @@ function handleText(message, replyToken, source) {
         return replyText(replyToken, storage);
     default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyText(replyToken, ["Sorry, I can\'t understand this :'", "Type 'menu' to open Menu, or 'help' to further assistance : )"]);
+      return replyText(replyToken, ["Sorry, I can\'t understand this :'", 
+        "Type 'menu' to open Menu, or 'help' for further assistance : )"]);
     }
   }
 }
