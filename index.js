@@ -113,7 +113,7 @@ function handleEvent(event) {
       if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
         data += `(${JSON.stringify(event.postback.params)})`;
       }
-      return replyText(event.replyToken, `Got postback: ${data}`);
+      // return replyText(event.replyToken, `Got postback: ${data}`);
 
     case 'beacon':
       return replyText(event.replyToken, `Got beacon: ${event.beacon.hwid}`);
