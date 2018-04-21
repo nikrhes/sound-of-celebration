@@ -291,7 +291,7 @@ function handleText(message, replyToken, source) {
           ],
         }
       );
-    case 'bye':
+    case 'input keywords':
       switch (source.type) {
         case 'user':
           return replyText(replyToken, 'Bot can\'t leave from 1:1 chat');
@@ -304,27 +304,7 @@ function handleText(message, replyToken, source) {
       }
     default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
-        return client.replyMessage(
-          replyToken,
-          {
-            type: 'template',
-            altText: 'Main Menu',
-            template: {
-              type: 'buttons',
-              thumbnailImageUrl: buttonsImageURL,
-              title: 'Main Menu',
-              text: 'Choose a menu',
-              actions: [
-                { label: 'INPUT FRAGMENT KEYWORDS', type: 'message', data: 'input keywords' },
-                { label: 'GUESS THE HEROES', type: 'message', data: 'guess heroes' },
-                { label: 'RUNDOWN', type: 'message', data: 'rundown' },
-                // { label: 'HELP', type: 'message', text: 'help' },
-              ],
-            },
-          }
-        );
-      }
+      return replyText(replyToken, "Sorry, I can\' understand this :'");
     }
   }
 }
