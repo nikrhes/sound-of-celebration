@@ -132,7 +132,8 @@ function handleText(message, replyToken, source) {
       if (source.userId) {
         return client.getProfile(source.userId)
           .then((profile) => {
-            storage.push(profile);
+            storage[profile];
+            console.log(storage);
             replyText(
               replyToken,
               [
@@ -301,11 +302,6 @@ function handleText(message, replyToken, source) {
           return replyText(replyToken, 'Leaving room')
             .then(() => client.leaveRoom(source.roomId));
       }
-    case 'storage':
-      return replyText(
-        replyToken,
-        storage
-      )
     case 'guest hero a':
       let hasTeam = false;
       for(let g=0; g<storage.length; g++) {
