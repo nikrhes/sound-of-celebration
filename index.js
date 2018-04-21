@@ -132,8 +132,8 @@ function handleText(message, replyToken, source) {
       if (source.userId) {
         return client.getProfile(source.userId)
           .then((profile) => {
-            this.storage.push(profile);
-            console.log(this.storage);
+            storage.push(profile);
+            console.log(storage);
             replyText(
               replyToken,
               [
@@ -325,7 +325,8 @@ function handleText(message, replyToken, source) {
       else
         return replyText(replyToken, storage);
     default: {
-      this.storage.push(msg);
+      storage.push(msg);
+      console.log(storage);
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       // if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
         return client.replyMessage(
