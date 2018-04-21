@@ -86,8 +86,8 @@ function handleEvent(event) {
       if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
         data += `(${JSON.stringify(event.postback.params)})`;
       }
-      // return replyText(event.replyToken, `Got postback: ${data}`);
-      return handlePostBack(data, event.replyToken, event.source);
+      return replyText(event.replyToken, `Got postback: ${data}`);
+      // return handlePostBack(data, event.replyToken, event.source);
       break;
     }
     case 'message':{
