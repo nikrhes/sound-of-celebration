@@ -127,19 +127,17 @@ function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   var msg = message.text.toLowerCase();
-  storage.push(msg);
-  console.log(storage);
-  
   switch (msg) {
     case 'profile':
       if (source.userId) {
         return client.getProfile(source.userId)
           .then((profile) => {
+            this.storage.push(profile);
+            console.log(this.storage);
             replyText(
               replyToken,
               [
-                `Hi ${profile.displayName}
-                Have a great melody today!`
+                `Hi ${profile.displayName} \n Have a great melody today!`
               ]
             )
           });
@@ -303,7 +301,9 @@ function handleText(message, replyToken, source) {
           return replyText(replyToken, 'Leaving room')
             .then(() => client.leaveRoom(source.roomId));
       }
-    case 'guest the heroes':
+    case 'input keywords':
+      return replyText(replyToken, "Silahkan masuk kata rahasia yang terdapat pada kartu");
+    case 'guest heroes':
       let hasTeam = false;
       for(let g=0; g<storage.length; g++) {
         if(storage[g] == 'profile') {
@@ -315,7 +315,7 @@ function handleText(message, replyToken, source) {
       if(!hasTeam)
         return replyText(replyToken, "Silahkan masukkan nama team terlebih dahulu (ketik profile)");
       else
-        return replyText(replyToken, "Silahkan masukkan jawaban kamu. INGAT! Kami hanya menerima jawaban pertama ya");
+        return replyText(replyToken, "Silahkan masukkan jawaban kamu. \n INGAT! Kami hanya menerima jawaban pertama ya");
     case 'delete storage':
       storage = [];
       return replyText(replyToken, "Storage sudah bersih");
@@ -325,6 +325,7 @@ function handleText(message, replyToken, source) {
       else
         return replyText(replyToken, storage);
     default: {
+      this.storage.push(msg);
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       // if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
         return client.replyMessage(
@@ -334,8 +335,8 @@ function handleText(message, replyToken, source) {
             altText: 'Main Menu',
             template: {
               type: 'buttons',
-              thumbnailImageUrl: buttonsImageURL,
-              title: 'Main Menu',
+              // thumbnailImageUrl: buttonsImageURL,
+              // title: 'Main Menu',
               text: 'Choose a menu',
               actions: [
                 { label: 'INPUT FRAGMENT KEYWORDS', type: 'message', data: 'input keywords' },
