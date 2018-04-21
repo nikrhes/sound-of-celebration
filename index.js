@@ -302,12 +302,9 @@ function handleText(message, replyToken, source) {
           return replyText(replyToken, 'Leaving room')
             .then(() => client.leaveRoom(source.roomId));
       }
-    case 'hi':{
-      
-    }
     default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'){
+      if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
         return client.replyMessage(
           replyToken,
           {
