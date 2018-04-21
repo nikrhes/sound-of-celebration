@@ -127,17 +127,17 @@ function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   var msg = message.text.toLowerCase();
+  storage = msg;
   switch (msg) {
     case 'profile':
       if (source.userId) {
         return client.getProfile(source.userId)
           .then((profile) => {
-            storage = profile.displayName;
             replyText(
               replyToken,
               [
-                `Hi ${profile.displayName}, <br />`,
-                `Have a great harmony today!`
+                `Hi ${profile.displayName},
+                Have a great harmony today!`
               ]
             )
           });
@@ -306,6 +306,24 @@ function handleText(message, replyToken, source) {
         replyToken,
         storage
       )
+    case 'guest hero A':
+      let hasTeam = false;
+      for(let g=0; g<storage.length; g++) {
+        if(storage[g] == 'profile') {
+          hasTeam = true;
+          break;
+        }
+      }
+    
+      if(!hasTeam)
+        return replyText(replyToken, "Silahkan masukkan nama team terlebih dahulu (ketik profile)");
+      else
+        return replyText(replyToken, "Silahkan masukkan jawaban kamu. INGAT! Kami hanya menerima jawaban pertama ya");
+    case 'delete storage':
+      storage = [];
+      return replyText(replyToken, "Storage sudah bersih");
+    case 'list of storage':
+      return replyText(replyToken, storage);
     default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
