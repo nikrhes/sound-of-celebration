@@ -125,7 +125,8 @@ function handleEvent(event) {
 function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
-  switch (message.text.toLowerCase()) {
+  var msg = message.text.toLowerCase();
+  switch (msg) {
     case 'profile':
       if (source.userId) {
         /* return client.getProfile(source.userId)
@@ -302,29 +303,32 @@ function handleText(message, replyToken, source) {
             .then(() => client.leaveRoom(source.roomId));
       }
     case 'hi':{
-      return client.replyMessage(
-        replyToken,
-        {
-          type: 'template',
-          altText: 'Main Menu',
-          template: {
-            type: 'buttons',
-            thumbnailImageUrl: buttonsImageURL,
-            title: 'My button sample',
-            text: 'Hello, my button',
-            actions: [
-              { label: 'Go to line.me', type: 'uri', uri: 'https://line.me' },
-              { label: 'Say hello1', type: 'postback', data: 'hello こんにちは' },
-              { label: '言 hello2', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
-              { label: 'Say message', type: 'message', text: 'Rice=米' },
-            ],
-          },
-        }
-      );
+      
     }
-    default:
+    default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyText(replyToken, message.text);
+      if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'){
+        return client.replyMessage(
+          replyToken,
+          {
+            type: 'template',
+            altText: 'Main Menu',
+            template: {
+              type: 'buttons',
+              thumbnailImageUrl: buttonsImageURL,
+              title: 'Main Menu',
+              text: 'Choose a menu',
+              actions: [
+                { label: 'INPUT FRAGMENT KEYWORDS', type: 'uri', uri: 'https://line.me' },
+                { label: 'GUESS THE HEROES', type: 'postback', data: 'hello こんにちは' },
+                { label: 'RUNDOWN', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
+                { label: 'HELP', type: 'message', text: 'Rice=米' },
+              ],
+            },
+          }
+        );
+      }
+    }
   }
 }
 
