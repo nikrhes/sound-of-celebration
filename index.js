@@ -45,6 +45,7 @@ app.post('/callback', line.middleware(config), (req, res) => {
     });
 });
 
+var storage = [];
 // simple reply function
 const replyText = (token, texts) => {
   texts = Array.isArray(texts) ? texts : [texts];
@@ -129,21 +130,19 @@ function handleText(message, replyToken, source) {
   switch (msg) {
     case 'profile':
       if (source.userId) {
-        /* return client.getProfile(source.userId)
-          .then((profile) => replyText(
-            replyToken,
-            [
-              `Display name: ${profile.displayName}`,
-              `Status message: ${profile.statusMessage}`,
-              {
-                type: 'sticker',
-                packageId: 1073,
-                stickerId: 17961,
-              }
-            ]
-          )); */
-
         return client.getProfile(source.userId)
+          .then((profile) => {
+            storage = profile.displayName;
+            replyText(
+              replyToken,
+              [
+                `Hi ${profile.displayName}, <br />`,
+                `Have a great harmony today!`
+              ]
+            )
+          });
+
+        /* return client.getProfile(source.userId)
           .then((profile) => multiReply(
             replyToken, [
               {
@@ -154,12 +153,12 @@ function handleText(message, replyToken, source) {
                 type: 'text',
                 text: `Status message: ${profile.statusMessage}`,
               },
-              /* {
+              {
                 type: 'sticker',
                 packageId: 1073,
                 stickerId: 17961,
-              } */
-              /* {
+              },
+              {
                 type: 'template',
                 altText: 'asking',
                 template: {
@@ -170,9 +169,9 @@ function handleText(message, replyToken, source) {
                     { label: 'Yes', type: 'message', text: 'Yes!' },
                   ],
                 },
-              } */
+              }
             ]
-          ));
+          )); */
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
       }
@@ -302,6 +301,11 @@ function handleText(message, replyToken, source) {
           return replyText(replyToken, 'Leaving room')
             .then(() => client.leaveRoom(source.roomId));
       }
+    case 'storage':
+      return replyText(
+        replyToken,
+        storage
+      )
     default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
