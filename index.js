@@ -205,7 +205,8 @@ function handleText(message, replyToken, source) {
                 title: 'Sound of Celebration',
                 text: 'Heroes Quest',
                 actions: [
-                  { label: 'Start Quest', type: 'postback', data: 'start quest' },
+                  { label: 'Start Quest', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
+                  { label: 'Say message', type: 'message', text: 'Rice=米' },
                 ],
               },
               {
