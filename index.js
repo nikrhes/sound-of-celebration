@@ -88,8 +88,9 @@ function handleEvent(event) {
       }
       // return replyText(event.replyToken, `Got postback: ${data}`);
       return handlePostBack(data, event.replyToken, event.source);
+      break;
     }
-    case 'message':
+    case 'message':{
       const message = event.message;
       switch (message.type) {
         case 'text':
@@ -107,31 +108,16 @@ function handleEvent(event) {
         default:
           throw new Error(`Unknown message: ${JSON.stringify(message)}`);
       }
-    case 'follow':
-      return replyText(event.replyToken, 'Got followed event');
-
-    case 'unfollow':
-      return console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
-
-    case 'join':
-      return replyText(event.replyToken, `Joined ${event.source.type}`);
-
-    case 'leave':
-      return console.log(`Left: ${JSON.stringify(event)}`);
-
-  
-    case 'beacon':
-      return replyText(event.replyToken, `Got beacon: ${event.beacon.hwid}`);
+      break;
+    }
 
     default:
       throw new Error(`Unknown event: ${JSON.stringify(event)}`);
   }
 }
 
-function handlePostBack(data, replyToken, source){
-  switch(data){
-
-  }
+function handlePostback(data, replyToken, source){
+  return replyText(replyToken, 'asdfasdf');
 }
 
 function handleText(message, replyToken, source) {
