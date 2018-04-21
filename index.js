@@ -191,7 +191,7 @@ function handleText(message, replyToken, source) {
           },
         }
       )
-    case 'carousel':
+    case 'menu':
       return client.replyMessage(
         replyToken,
         {
