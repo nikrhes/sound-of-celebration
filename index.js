@@ -87,7 +87,7 @@ function handleEvent(event) {
         data += `(${JSON.stringify(event.postback.params)})`;
       }
       // return replyText(event.replyToken, `Got postback: ${data}`);
-      break;
+      return handlePostBack(data, event.replyToken, event.source);
     }
     case 'message':
       const message = event.message;
@@ -128,11 +128,14 @@ function handleEvent(event) {
   }
 }
 
+function handlePostBack(data, replyToken, source){
+  switch(data){
+
+  }
+}
+
 function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
-  if(isPostBack){
-    return;
-  }
   var msg = message.text.toLowerCase();
   storage.push(msg);
   switch (msg) {
