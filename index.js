@@ -202,8 +202,8 @@ function handleText(message, replyToken, source) {
             columns: [
               {
                 thumbnailImageUrl: buttonsImageURL,
-                title: 'hoge',
-                text: 'fuga',
+                title: 'Sound of Celebration',
+                text: 'Main Menu',
                 actions: [
                   { label: 'Go to line.me', type: 'uri', uri: 'https://line.me' },
                   { label: 'Say hello1', type: 'postback', data: 'hello こんにちは' },
@@ -211,8 +211,8 @@ function handleText(message, replyToken, source) {
               },
               {
                 thumbnailImageUrl: buttonsImageURL,
-                title: 'hoge',
-                text: 'fuga',
+                title: 'Sound of Celebration',
+                text: 'Event Informations',
                 actions: [
                   { label: '言 hello2', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
                   { label: 'Say message', type: 'message', text: 'Rice=米' },
@@ -325,7 +325,7 @@ function handleText(message, replyToken, source) {
         return replyText(replyToken, storage);
     default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyText(replyToken, "Sorry, I can\'t understand this :'");
+      return replyText(replyToken, ["Sorry, I can\'t understand this :'", "Type 'menu' to open Menu, or 'help' to further assistance : )"]);
     }
   }
 }
