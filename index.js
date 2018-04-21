@@ -127,18 +127,19 @@ function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   var msg = message.text.toLowerCase();
+  storage.push(msg);
+  console.log(storage);
+  
   switch (msg) {
     case 'profile':
       if (source.userId) {
         return client.getProfile(source.userId)
           .then((profile) => {
-            storage[profile];
-            console.log(storage);
             replyText(
               replyToken,
               [
-                `Hi ${profile.displayName}`,
-                `Have a great harmony today!`
+                `Hi ${profile.displayName}
+                Have a great melody today!`
               ]
             )
           });
@@ -302,7 +303,7 @@ function handleText(message, replyToken, source) {
           return replyText(replyToken, 'Leaving room')
             .then(() => client.leaveRoom(source.roomId));
       }
-    case 'guest hero a':
+    case 'guest the heroes':
       let hasTeam = false;
       for(let g=0; g<storage.length; g++) {
         if(storage[g] == 'profile') {
@@ -320,12 +321,12 @@ function handleText(message, replyToken, source) {
       return replyText(replyToken, "Storage sudah bersih");
     case 'list of storage':
       if(storage.length == 0)
-        return replyText(replyToken, "tidak ada storage");
+        return replyText(replyToken, "Tidak ada storage");
       else
         return replyText(replyToken, storage);
     default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
+      // if(msg=='hi'||msg=='hai'||msg=='halo'||msg=='hola'||msg=='hey'||msg=='hei'){
         return client.replyMessage(
           replyToken,
           {
@@ -345,7 +346,7 @@ function handleText(message, replyToken, source) {
             },
           }
         );
-      }
+      // }
     }
   }
 }
