@@ -205,7 +205,7 @@ function handleText(message, replyToken, source) {
                 title: 'Heroes Quest',
                 text: 'Finish to quest to find the missing heroes!',
                 actions: [
-                  { label: 'Start Quest', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
+                  { label: 'Start Quest', type: 'postback', data: 'hello こんにちは', text: 'Start Quest'},
                 ],
               },
               {
@@ -213,7 +213,7 @@ function handleText(message, replyToken, source) {
                 title: 'Event Information',
                 text: 'Discover the fun!',
                 actions: [
-                  { label: 'Yes, please!', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
+                  { label: 'Yes, please!', type: 'postback', data: 'hello こんにちは', text: 'Event Information' },
                 ],
               },
             ],
