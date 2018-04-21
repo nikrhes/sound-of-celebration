@@ -316,7 +316,7 @@ function handleText(message, replyToken, source) {
               title: 'Main Menu',
               text: 'Choose a menu',
               actions: [
-                { label: 'INPUT FRAGMENT KEYWORDS', type: 'message', uri: 'input keywords' },
+                { label: 'INPUT FRAGMENT KEYWORDS', type: 'message', data: 'input keywords' },
                 { label: 'GUESS THE HEROES', type: 'message', data: 'guess heroes' },
                 { label: 'RUNDOWN', type: 'message', data: 'rundown' },
                 // { label: 'HELP', type: 'message', text: 'help' },
