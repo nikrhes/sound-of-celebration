@@ -45,6 +45,7 @@ app.post('/callback', line.middleware(config), (req, res) => {
     });
 });
 
+var storage = [];
 // simple reply function
 const replyText = (token, texts) => {
   texts = Array.isArray(texts) ? texts : [texts];
@@ -126,24 +127,21 @@ function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   var msg = message.text.toLowerCase();
+  storage.push(msg);
   switch (msg) {
     case 'profile':
       if (source.userId) {
-        /* return client.getProfile(source.userId)
-          .then((profile) => replyText(
-            replyToken,
-            [
-              `Display name: ${profile.displayName}`,
-              `Status message: ${profile.statusMessage}`,
-              {
-                type: 'sticker',
-                packageId: 1073,
-                stickerId: 17961,
-              }
-            ]
-          )); */
-
         return client.getProfile(source.userId)
+          .then((profile) => {
+            replyText(
+              replyToken,
+              [
+                `Hi ${profile.displayName}\n Have a great melody today!`
+              ]
+            )
+          });
+
+        /* return client.getProfile(source.userId)
           .then((profile) => multiReply(
             replyToken, [
               {
@@ -154,12 +152,12 @@ function handleText(message, replyToken, source) {
                 type: 'text',
                 text: `Status message: ${profile.statusMessage}`,
               },
-              /* {
+              {
                 type: 'sticker',
                 packageId: 1073,
                 stickerId: 17961,
-              } */
-              /* {
+              },
+              {
                 type: 'template',
                 altText: 'asking',
                 template: {
@@ -170,9 +168,9 @@ function handleText(message, replyToken, source) {
                     { label: 'Yes', type: 'message', text: 'Yes!' },
                   ],
                 },
-              } */
+              }
             ]
-          ));
+          )); */
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
       }
@@ -302,9 +300,32 @@ function handleText(message, replyToken, source) {
           return replyText(replyToken, 'Leaving room')
             .then(() => client.leaveRoom(source.roomId));
       }
+    case 'input keywords':
+      return replyText(replyToken, "Silahkan masuk kata rahasia yang terdapat pada kartu");
+    case 'guest heroes':
+      let hasTeam = false;
+      for(let g=0; g<storage.length; g++) {
+        if(storage[g] == 'profile') {
+          hasTeam = true;
+          break;
+        }
+      }
+    
+      if(!hasTeam)
+        return replyText(replyToken, "Silahkan masukkan nama team terlebih dahulu (ketik profile)");
+      else
+        return replyText(replyToken, "Silahkan masukkan jawaban kamu.\n INGAT! Kami hanya menerima jawaban pertama ya");
+    case 'delete storage':
+      storage = [];
+      return replyText(replyToken, "Storage sudah bersih");
+    case 'list of storage':
+      if(storage.length == 0)
+        return replyText(replyToken, "Tidak ada storage");
+      else
+        return replyText(replyToken, storage);
     default: {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyText(replyToken, "Sorry, I can\' understand this :'");
+      return replyText(replyToken, "Sorry, I can\'t understand this :'");
     }
   }
 }
