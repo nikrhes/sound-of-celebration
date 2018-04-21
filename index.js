@@ -319,10 +319,10 @@ function handleText(message, replyToken, source) {
               title: 'Main Menu',
               text: 'Choose a menu',
               actions: [
-                { label: 'INPUT FRAGMENT KEYWORDS', type: 'uri', uri: 'https://line.me' },
-                { label: 'GUESS THE HEROES', type: 'postback', data: 'hello こんにちは' },
-                { label: 'RUNDOWN', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
-                { label: 'HELP', type: 'message', text: 'Rice=米' },
+                { label: 'INPUT FRAGMENT KEYWORDS', type: 'message', uri: 'input keywords' },
+                { label: 'GUESS THE HEROES', type: 'message', data: 'guess heroes' },
+                { label: 'RUNDOWN', type: 'message', data: 'rundown' },
+                // { label: 'HELP', type: 'message', text: 'help' },
               ],
             },
           }
