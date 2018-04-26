@@ -377,7 +377,7 @@ function handleAudio(message, replyToken) {
       return client.replyMessage(
         replyToken,
         {
-          type: 'video',
+          type: 'audio',
           originalContentUrl: baseURL + 'static/music/test.mp4'
         }
       );
