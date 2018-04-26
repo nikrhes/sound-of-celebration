@@ -377,7 +377,7 @@ function handleAudio(message, replyToken) {
       return client.replyMessage(
         replyToken,
         {
-          type: 'audio',
+          type: 'video',
           originalContentUrl: baseURL + 'static/music/Ajoin.mp3',
           duration: 15000,
         }
