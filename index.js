@@ -188,7 +188,7 @@ function handleText(message, replyToken, source) {
         }
       )
     case 'music':
-      return handleAudio(data,replyToken);
+      return handleAudio(message,replyToken);
     case 'menu':
       return client.replyMessage(
         replyToken,
