@@ -378,7 +378,7 @@ function handleAudio(message, replyToken) {
         replyToken,
         {
           type: 'audio',
-          originalContentUrl: baseURL + 'static/music/A join.mp3',
+          originalContentUrl: baseURL + 'static/music/Ajoin.mp3',
           duration: 15000,
         }
       );
