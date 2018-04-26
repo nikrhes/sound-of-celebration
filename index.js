@@ -378,7 +378,7 @@ function handleAudio(message, replyToken) {
         replyToken,
         {
           type: 'video',
-          originalContentUrl: baseURL + 'static/music/Ajoin.mp3'
+          originalContentUrl: baseURL + 'static/music/test.mp4'
         }
       );
     // });
