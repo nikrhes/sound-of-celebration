@@ -100,7 +100,7 @@ function handleEvent(event) {
         case 'video':
           return handleVideo(message, event.replyToken);
         case 'audio':
-          return handleAudio(message, event.replyToken);
+          // return handleAudio(message, event.replyToken);
         case 'location':
           return handleLocation(message, event.replyToken);
         case 'sticker':
@@ -187,6 +187,8 @@ function handleText(message, replyToken, source) {
           },
         }
       )
+    case 'music':
+      return handleAudio(data,replyToken);
     case 'menu':
       return client.replyMessage(
         replyToken,
@@ -354,7 +356,7 @@ function handleVideo(message, replyToken) {
     .then((downloadPath) => {
       // FFmpeg and ImageMagick is needed here to run 'convert'
       // Please consider about security and performance by yourself
-      cp.execSync(`convert mp4:${downloadPath}[0] jpeg:${previewPath}`);
+      // cp.execSync(`convert mp4:${downloadPath}[0] jpeg:${previewPath}`);
 
       return client.replyMessage(
         replyToken,
@@ -368,19 +370,19 @@ function handleVideo(message, replyToken) {
 }
 
 function handleAudio(message, replyToken) {
-  const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.m4a`);
+  // const downloadPath = path.join(__dirname, 'static/music/Ajoin.mp3', `${message.id}.m4a`);
 
-  return downloadContent(message.id, downloadPath)
-    .then((downloadPath) => {
+  // return downloadContent(message.id, downloadPath)
+  //   .then((downloadPath) => {
       return client.replyMessage(
         replyToken,
         {
           type: 'audio',
-          originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-          duration: 1000,
+          originalContentUrl: baseURL + 'static/music/Ajoin.mp3',
+          duration: 5000,
         }
       );
-    });
+    // });
 }
 
 function downloadContent(messageId, downloadPath) {
