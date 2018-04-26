@@ -378,7 +378,8 @@ function handleAudio(message, replyToken) {
         replyToken,
         {
           type: 'audio',
-          originalContentUrl: baseURL + 'static/music/test.mp4'
+          originalContentUrl: baseURL + 'static/music/test.mp4',
+          duration: 15000
         }
       );
     // });
