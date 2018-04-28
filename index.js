@@ -283,20 +283,27 @@ function handleText(message, replyToken, source) {
       let redisData = redisClient.get(client.userId+"ANSWERHERO");
 
       if(redisData !== undefined && redisData !== null){
-        return client.replyMessage(
-          replyToken,
-          {
-            type: 'template',
-            altText: 'Confirm alt text',
-            template: {
-              type: 'confirm',
-              text: 'Are you sure want to answer the Hero as ' + message.text + " ?",
-              actions: [
-                { label: 'Yes', type: 'message', text: 'Yes!' },
-                { label: 'No', type: 'message', text: 'No!' },
-              ],
-            },
-          });
+
+        if(redisData === 'start') {
+          redisClient.set(client.userId+"ANSWERHERO",message.text);
+          return client.replyMessage(
+            replyToken,
+            {
+              type: 'template',
+              altText: 'Confirm alt text',
+              template: {
+                type: 'confirm',
+                text: 'Are you sure want to answer the Hero as ' + message.text + " ?",
+                actions: [
+                  { label: 'Yes', type: 'message', text: 'Yes!' },
+                  { label: 'No', type: 'message', text: 'No!' },
+                ],
+              },
+            });
+        }else {
+          redisClient.del(client.userId+"ANSWERHERO");
+          return replyText(replyToken, "Thanks for your answer, good luck!");
+        }
       }
 
       console.log(`Echo message to ${replyToken}: ${message.text}`);
