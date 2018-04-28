@@ -24,9 +24,16 @@ const client = new line.Client(config);
 // about Express itself: https://expressjs.com/
 const app = express();
 
+//create redis connection
+const redisClient = require('redis').createClient(process.env.REDIS_URL);
+
 // serve static and downloaded files
 app.use('/static', express.static('static'));
 app.use('/downloaded', express.static('downloaded'));
+
+redisClient.on('connect', function() {
+  console.log('redis connected');
+});
 
 // webhook callback
 app.post('/callback', line.middleware(config), (req, res) => {
@@ -122,8 +129,13 @@ function handlePostback(data, replyToken, source){
 
 function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
+  console.log("message data",mesage);
   var msg = message.text.toLowerCase();
+  console.log("message",msg);
   storage.push(msg);
+
+  //check if user want to register
+
   switch (msg) {
     case 'profile':
       if (source.userId) {
@@ -136,37 +148,6 @@ function handleText(message, replyToken, source) {
               ]
             )
           });
-
-        /* return client.getProfile(source.userId)
-          .then((profile) => multiReply(
-            replyToken, [
-              {
-                type: 'text',
-                text: `Display name: ${profile.displayName}`,
-              },
-              {
-                type: 'text',
-                text: `Status message: ${profile.statusMessage}`,
-              },
-              {
-                type: 'sticker',
-                packageId: 1073,
-                stickerId: 17961,
-              },
-              {
-                type: 'template',
-                altText: 'asking',
-                template: {
-                  type: 'confirm',
-                  text: 'Am i Clever?',
-                  actions: [
-                    { label: 'Absolutely', type: 'message', text: 'Absolutely!' },
-                    { label: 'Yes', type: 'message', text: 'Yes!' },
-                  ],
-                },
-              }
-            ]
-          )); */
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
       }
@@ -252,23 +233,6 @@ function handleText(message, replyToken, source) {
           },
         }
       );
-    case 'datetime':
-      return client.replyMessage(
-        replyToken,
-        {
-          type: 'template',
-          altText: 'Datetime pickers alt text',
-          template: {
-            type: 'buttons',
-            text: 'Select date / time !',
-            actions: [
-              { type: 'datetimepicker', label: 'date', data: 'DATE', mode: 'date' },
-              { type: 'datetimepicker', label: 'time', data: 'TIME', mode: 'time' },
-              { type: 'datetimepicker', label: 'datetime', data: 'DATETIME', mode: 'datetime' },
-            ],
-          },
-        }
-      );
     case 'imagemap':
       return client.replyMessage(
         replyToken,
@@ -285,32 +249,24 @@ function handleText(message, replyToken, source) {
           ],
         }
       );
-    case 'input keywords':
-      switch (source.type) {
-        case 'user':
-          return replyText(replyToken, 'Bot can\'t leave from 1:1 chat');
-        case 'group':
-          return replyText(replyToken, 'Leaving group')
-            .then(() => client.leaveGroup(source.groupId));
-        case 'room':
-          return replyText(replyToken, 'Leaving room')
-            .then(() => client.leaveRoom(source.roomId));
-      }
+    case 'register team':
+      return replyText(replyToken, "Silahkan masuk kata rahasia yang terdapat pada kartu");
     case 'input keywords':
       return replyText(replyToken, "Silahkan masuk kata rahasia yang terdapat pada kartu");
-    case 'guest heroes':
-      let hasTeam = false;
-      for(let g=0; g<storage.length; g++) {
-        if(storage[g] == 'profile') {
-          hasTeam = true;
-          break;
-        }
-      }
+    case 'guess heroes':
+      // let hasTeam = false;
+      // for(let g=0; g<storage.length; g++) {
+      //   if(storage[g] == 'profile') {
+      //     hasTeam = true;
+      //     break;
+      //   }
+      // }
     
-      if(!hasTeam)
-        return replyText(replyToken, "Silahkan masukkan nama team terlebih dahulu (ketik profile)");
-      else
-        return replyText(replyToken, "Silahkan masukkan jawaban kamu.\n INGAT! Kami hanya menerima jawaban pertama ya");
+      // if(!hasTeam)
+      //   return replyText(replyToken, "Silahkan masukkan nama team terlebih dahulu (ketik profile)");
+      // else
+      //   return replyText(replyToken, "Silahkan masukkan jawaban kamu.\n INGAT! Kami hanya menerima jawaban pertama ya");
+      return createHeroesCarousel(replyToken);
     case 'delete storage':
       storage = [];
       return replyText(replyToken, "Storage sudah bersih");
@@ -327,46 +283,120 @@ function handleText(message, replyToken, source) {
   }
 }
 
-function handleImage(message, replyToken) {
-  const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
-  const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
-
-  return downloadContent(message.id, downloadPath)
-    .then((downloadPath) => {
-      // ImageMagick is needed here to run 'convert'
-      // Please consider about security and performance by yourself
-      cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
-
-      return client.replyMessage(
-        replyToken,
-        {
-          type: 'image',
-          originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-          previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
-        }
-      );
-    });
+function createHeroesCarousel(replyToken) {
+  return client.replyMessage(
+    replyToken,
+    {
+      type: 'template',
+      altText: 'Heroes Menu',
+      template: {
+        type: 'carousel',
+        columns: [
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero A',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero A', type: 'postback', data: 'HEROA', text: 'Guess Hero A'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero B',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero B', type: 'postback', data: 'HEROB', text: 'Guess Hero B'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero C',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero C', type: 'postback', data: 'HEROC', text: 'Guess Hero C'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero D',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero D', type: 'postback', data: 'HEROD', text: 'Guess Hero D'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero E',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero E', type: 'postback', data: 'HEROE', text: 'Guess Hero E'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero F',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero F', type: 'postback', data: 'HEROF', text: 'Guess Hero F'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero G',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero G', type: 'postback', data: 'HEROG', text: 'Guess Hero G'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero H',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero H', type: 'postback', data: 'HEROH', text: 'Guess Hero H'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero I',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero I', type: 'postback', data: 'HEROI', text: 'Guess Hero I'},
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'Musical Hero J',
+            text: 'Guesx This Hero?',
+            actions: [
+              { label: 'Guess Hero J', type: 'postback', data: 'HEROJ', text: 'Guess Hero J'},
+            ],
+          },
+        ],
+      },
+    }
+  );
 }
 
-function handleVideo(message, replyToken) {
-  const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.mp4`);
-  const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
+function handleImage(message, replyToken) {
+  // const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
+  // const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
 
-  return downloadContent(message.id, downloadPath)
-    .then((downloadPath) => {
-      // FFmpeg and ImageMagick is needed here to run 'convert'
-      // Please consider about security and performance by yourself
-      // cp.execSync(`convert mp4:${downloadPath}[0] jpeg:${previewPath}`);
+  // return downloadContent(message.id, downloadPath)
+  //   .then((downloadPath) => {
+  //     // ImageMagick is needed here to run 'convert'
+  //     // Please consider about security and performance by yourself
+  //     cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
 
-      return client.replyMessage(
-        replyToken,
-        {
-          type: 'video',
-          originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-          previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
-        }
-      );
-    });
+  //     return client.replyMessage(
+  //       replyToken,
+  //       {
+  //         type: 'image',
+  //         originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+  //         previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
+  //       }
+  //     );
+  //   });
 }
 
 function handleAudio(message, replyToken) {
@@ -383,29 +413,6 @@ function handleAudio(message, replyToken) {
         }
       );
     // });
-}
-
-function downloadContent(messageId, downloadPath) {
-  return client.getMessageContent(messageId)
-    .then((stream) => new Promise((resolve, reject) => {
-      const writable = fs.createWriteStream(downloadPath);
-      stream.pipe(writable);
-      stream.on('end', () => resolve(downloadPath));
-      stream.on('error', reject);
-    }));
-}
-
-function handleLocation(message, replyToken) {
-  return client.replyMessage(
-    replyToken,
-    {
-      type: 'location',
-      title: message.title,
-      address: message.address,
-      latitude: message.latitude,
-      longitude: message.longitude,
-    }
-  );
 }
 
 function handleSticker(message, replyToken) {
