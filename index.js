@@ -129,7 +129,7 @@ function handlePostback(data, replyToken, source){
 
 function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
-  console.log("message data",mesage);
+  console.log("message data",message);
   var msg = message.text.toLowerCase();
   console.log("message",msg);
   storage.push(msg);
@@ -267,6 +267,7 @@ function handleText(message, replyToken, source) {
       // else
       //   return replyText(replyToken, "Silahkan masukkan jawaban kamu.\n INGAT! Kami hanya menerima jawaban pertama ya");
       return createHeroesCarousel(replyToken);
+
     case 'delete storage':
       storage = [];
       return replyText(replyToken, "Storage sudah bersih");
