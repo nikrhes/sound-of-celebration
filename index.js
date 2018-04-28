@@ -280,6 +280,14 @@ function handleText(message, replyToken, source) {
         return replyText(replyToken, storage);
     default: {
 
+      if(msg.indexOf("clue") === 0) {
+        //add clue for the team
+        //we should check if it is valid clue
+        //then flag the clue to the team and flag the clue to be unused anymore
+        //if clue used or wrong one, return replyText(replyToken, "Sorry wrong clue");
+        return replyText(replyToken, "Clue succesfully registered");
+      }else{
+
       let redisData = redisClient.get(client.userId+"ANSWERHERO");
 
       if(redisData !== undefined && redisData !== null){
@@ -305,6 +313,7 @@ function handleText(message, replyToken, source) {
           return replyText(replyToken, "Thanks for your answer, good luck!");
         }
       }
+      }
 
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       return replyText(replyToken, ["Sorry, I can\'t understand this :'", 
@@ -326,7 +335,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero A',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero A', type: 'postback', data: 'CLUEHEROA'},
               { label: 'Answer Hero A', type: 'postback', data: 'ANSWERHEROA'}
@@ -335,7 +344,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero B',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero B', type: 'postback', data: 'CLUEHEROB'},
               { label: 'Answer Hero B', type: 'postback', data: 'ANSWERHEROB'}
@@ -344,7 +353,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero C',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero C', type: 'postback', data: 'CLUEHEROC'},
               { label: 'Answer Hero C', type: 'postback', data: 'ANSWERHEROC'}
@@ -353,7 +362,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero D',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero D', type: 'postback', data: 'CLUEHEROD'},
               { label: 'Answer Hero D', type: 'postback', data: 'ANSWERHEROD'}
@@ -362,7 +371,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero E',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero E', type: 'postback', data: 'CLUEHEROE'},
               { label: 'Answer Hero E', type: 'postback', data: 'ANSWERHEROE'}
@@ -371,7 +380,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero F',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero F', type: 'postback', data: 'CLUECLUEHEROF'},
               { label: 'Answer Hero F', type: 'postback', data: 'ANSWERHEROF'}
@@ -380,7 +389,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero G',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero G', type: 'postback', data: 'CLUEHEROG'},
               { label: 'Answer Hero G', type: 'postback', data: 'ANSWERHEROG'}
@@ -389,7 +398,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero H',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero H', type: 'postback', data: 'CLUEHEROH'},
               { label: 'Answer Hero H', type: 'postback', data: 'ANSWERHEROH'}
@@ -398,7 +407,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero I',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero I', type: 'postback', data: 'HEROI'},
               { label: 'Answer Hero I', type: 'postback', data: 'ANSWERHEROI'}
@@ -407,7 +416,7 @@ function createHeroesCarousel(replyToken) {
           {
             thumbnailImageUrl: buttonsImageURL,
             title: 'Musical Hero J',
-            text: 'Guesx This Hero?',
+            text: 'Guess This Hero?',
             actions: [
               { label: 'Clue Hero J', type: 'postback', data: 'HEROJ'},
               { label: 'Answer Hero J', type: 'postback', data: 'ANSWERHEROJ'}
