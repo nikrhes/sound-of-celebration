@@ -184,7 +184,7 @@ function handleText(message, replyToken, source) {
                 title: 'Heroes Quest',
                 text: 'Finish to quest to find the missing heroes!',
                 actions: [
-                  { label: 'Start Quest', type: 'postback', data: 'start quest', text: 'Start Quest'},
+                  { label: 'Start Quest', type: 'postback', data: 'start quest', displayText: 'Start Quest'},
                 ],
               },
               {
@@ -192,7 +192,7 @@ function handleText(message, replyToken, source) {
                 title: 'Event Information',
                 text: 'Discover the fun!',
                 actions: [
-                  { label: 'Yes, please!', type: 'postback', data: 'event information', text: 'Event Information' },
+                  { label: 'Yes, please!', type: 'postback', data: 'event information', displayText: 'Event Information' },
                 ],
               },
             ],
@@ -285,6 +285,7 @@ function handleText(message, replyToken, source) {
 }
 
 function createHeroesCarousel(replyToken) {
+  const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
   return client.replyMessage(
     replyToken,
     {
@@ -298,7 +299,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero A',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero A', type: 'postback', data: 'HEROA', text: 'Guess Hero A'},
+              { label: 'Guess Hero A', type: 'postback', data: 'HEROA'},
             ],
           },
           {
@@ -306,7 +307,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero B',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero B', type: 'postback', data: 'HEROB', text: 'Guess Hero B'},
+              { label: 'Guess Hero B', type: 'postback', data: 'HEROB'},
             ],
           },
           {
@@ -314,7 +315,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero C',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero C', type: 'postback', data: 'HEROC', text: 'Guess Hero C'},
+              { label: 'Guess Hero C', type: 'postback', data: 'HEROC'},
             ],
           },
           {
@@ -322,7 +323,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero D',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero D', type: 'postback', data: 'HEROD', text: 'Guess Hero D'},
+              { label: 'Guess Hero D', type: 'postback', data: 'HEROD'},
             ],
           },
           {
@@ -330,7 +331,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero E',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero E', type: 'postback', data: 'HEROE', text: 'Guess Hero E'},
+              { label: 'Guess Hero E', type: 'postback', data: 'HEROE'},
             ],
           },
           {
@@ -338,7 +339,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero F',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero F', type: 'postback', data: 'HEROF', text: 'Guess Hero F'},
+              { label: 'Guess Hero F', type: 'postback', data: 'HEROF'},
             ],
           },
           {
@@ -346,7 +347,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero G',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero G', type: 'postback', data: 'HEROG', text: 'Guess Hero G'},
+              { label: 'Guess Hero G', type: 'postback', data: 'HEROG'},
             ],
           },
           {
@@ -354,7 +355,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero H',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero H', type: 'postback', data: 'HEROH', text: 'Guess Hero H'},
+              { label: 'Guess Hero H', type: 'postback', data: 'HEROH'},
             ],
           },
           {
@@ -362,7 +363,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero I',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero I', type: 'postback', data: 'HEROI', text: 'Guess Hero I'},
+              { label: 'Guess Hero I', type: 'postback', data: 'HEROI'},
             ],
           },
           {
@@ -370,7 +371,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero J',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero J', type: 'postback', data: 'HEROJ', text: 'Guess Hero J'},
+              { label: 'Guess Hero J', type: 'postback', data: 'HEROJ'},
             ],
           },
         ],
