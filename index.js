@@ -92,6 +92,8 @@ function handleEvent(event) {
       let data = event.postback.data;
       if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
         data += `(${JSON.stringify(event.postback.params)})`;
+      }else if (data.indexOf('HERO') > -1) {
+        return handlePostBack(event.replyToken,data);
       }
       return replyText(event.replyToken, `Got postback: ${data}`);
       // return handlePostBack(data, event.replyToken, event.source);
@@ -277,6 +279,26 @@ function handleText(message, replyToken, source) {
       else
         return replyText(replyToken, storage);
     default: {
+
+      let redisData = redisClient.get(client.userId+"ANSWERHERO");
+
+      if(redisData !== undefined && redisData !== null){
+        return client.replyMessage(
+          replyToken,
+          {
+            type: 'template',
+            altText: 'Confirm alt text',
+            template: {
+              type: 'confirm',
+              text: 'Are you sure want to answer the Hero as ' + message.text + " ?",
+              actions: [
+                { label: 'Yes', type: 'message', text: 'Yes!' },
+                { label: 'No', type: 'message', text: 'No!' },
+              ],
+            },
+          });
+      }
+
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       return replyText(replyToken, ["Sorry, I can\'t understand this :'", 
         "Type 'menu' to open Menu, or 'help' for further assistance : )"]);
@@ -299,7 +321,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero A',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero A', type: 'postback', data: 'HEROA'},
+              { label: 'Clue Hero A', type: 'postback', data: 'CLUEHEROA'},
+              { label: 'Answer Hero A', type: 'postback', data: 'ANSWERHEROA'}
             ],
           },
           {
@@ -307,7 +330,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero B',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero B', type: 'postback', data: 'HEROB'},
+              { label: 'Clue Hero B', type: 'postback', data: 'CLUEHEROB'},
+              { label: 'Answer Hero B', type: 'postback', data: 'ANSWERHEROB'}
             ],
           },
           {
@@ -315,7 +339,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero C',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero C', type: 'postback', data: 'HEROC'},
+              { label: 'Clue Hero C', type: 'postback', data: 'CLUEHEROC'},
+              { label: 'Answer Hero C', type: 'postback', data: 'ANSWERHEROC'}
             ],
           },
           {
@@ -323,7 +348,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero D',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero D', type: 'postback', data: 'HEROD'},
+              { label: 'Clue Hero D', type: 'postback', data: 'CLUEHEROD'},
+              { label: 'Answer Hero D', type: 'postback', data: 'ANSWERHEROD'}
             ],
           },
           {
@@ -331,7 +357,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero E',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero E', type: 'postback', data: 'HEROE'},
+              { label: 'Clue Hero E', type: 'postback', data: 'CLUEHEROE'},
+              { label: 'Answer Hero E', type: 'postback', data: 'ANSWERHEROE'}
             ],
           },
           {
@@ -339,7 +366,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero F',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero F', type: 'postback', data: 'HEROF'},
+              { label: 'Clue Hero F', type: 'postback', data: 'CLUECLUEHEROF'},
+              { label: 'Answer Hero F', type: 'postback', data: 'ANSWERHEROF'}
             ],
           },
           {
@@ -347,7 +375,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero G',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero G', type: 'postback', data: 'HEROG'},
+              { label: 'Clue Hero G', type: 'postback', data: 'CLUEHEROG'},
+              { label: 'Answer Hero G', type: 'postback', data: 'ANSWERHEROG'}
             ],
           },
           {
@@ -355,7 +384,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero H',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero H', type: 'postback', data: 'HEROH'},
+              { label: 'Clue Hero H', type: 'postback', data: 'CLUEHEROH'},
+              { label: 'Answer Hero H', type: 'postback', data: 'ANSWERHEROH'}
             ],
           },
           {
@@ -363,7 +393,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero I',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero I', type: 'postback', data: 'HEROI'},
+              { label: 'Clue Hero I', type: 'postback', data: 'HEROI'},
+              { label: 'Answer Hero I', type: 'postback', data: 'ANSWERHEROI'}
             ],
           },
           {
@@ -371,7 +402,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero J',
             text: 'Guesx This Hero?',
             actions: [
-              { label: 'Guess Hero J', type: 'postback', data: 'HEROJ'},
+              { label: 'Clue Hero J', type: 'postback', data: 'HEROJ'},
+              { label: 'Answer Hero J', type: 'postback', data: 'ANSWERHEROJ'}
             ],
           },
         ],
@@ -426,6 +458,15 @@ function handleSticker(message, replyToken) {
       stickerId: message.stickerId,
     }
   );
+}
+
+function handlePostBack(replyToken,data) {
+  if(data.indexOf("CLUEHERO") > -1) {
+    return handleAudio(null, replyToken);
+  }else if(data.indexOf("ANSWERHERO") > -1) {
+    redisClient.set(client.userId+"ANSWERHERO","start");
+    return replyText(replyToken, ["Please type your answer!"]);
+  }
 }
 
 // listen on port
