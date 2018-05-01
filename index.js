@@ -514,17 +514,20 @@ function handlePostBack(replyToken,data,source) {
     redisClient.set(source.userId+"ANSWERHERO","start");
     return replyText(replyToken, ["Please type your answer!"]);
   }else if(data.indexOf("REGISTERTEAM") > -1) {
-    let teamName =  redisClient.get(source.userId+"REGISTERTEAM");
-    console.log("team Name",teamName);
-    if(data === 'REGISTERTEAMYES') {
-      return Player.create({userId: source.userId,teamName:teamName},(err)=> {
-        console.log(err);
-        return replyText(replyToken, ["Registration successfull"]);
-      });
-    }else {
-      return replyText(replyToken, ["Registration canceled"]);
-    }
-    redisClient.del(source.userId+"REGISTERTEAM");
+    redisClient.get(source.userId+"REGISTERTEAM",(err,teamName)=> {
+      if(teamName) {
+        console.log("team Name",teamName);
+        if(data === 'REGISTERTEAMYES') {
+          return Player.create({userId: source.userId,teamName:teamName},(err)=> {
+            console.log(err);
+            return replyText(replyToken, ["Registration successfull"]);
+          });
+        }else {
+          return replyText(replyToken, ["Registration canceled"]);
+        }
+        redisClient.del(source.userId+"REGISTERTEAM");
+      }
+    });
   }
 }
 
