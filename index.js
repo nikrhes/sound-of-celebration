@@ -94,7 +94,7 @@ function handleEvent(event) {
       if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
         data += `(${JSON.stringify(event.postback.params)})`;
       }else {
-        return handlePostback(event.replyToken,data,event.source);
+        return handlePostBack(event.replyToken,data,event.source);
       }
       return replyText(event.replyToken, `Got postback: ${data}`);
       // return handlePostBack(data, event.replyToken, event.source);
@@ -517,6 +517,8 @@ function handlePostBack(replyToken,data,source) {
       return Player.create({userId: source.userId,teamName:teamName},()=> {
         return replyText(replyToken, ["Registration successfull"]);
       });
+    }else {
+      return replyText(replyToken, ["Registration canceled"]);
     }
     redisClient.del(source.userId+"REGISTERTEAM");
   }
