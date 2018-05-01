@@ -260,7 +260,7 @@ function handleText(message, replyToken, source) {
         query.exec((err,docs)=> {
           if(docs.length > 0) {
             return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
-            "you cant't register to more than 1 team"]);
+            "you can't register to more than 1 team"]);
           }else {
             let trimmed = msgWithData.replace("register team ","");
             
@@ -319,36 +319,35 @@ function handleText(message, replyToken, source) {
         return replyText(replyToken, "Clue succesfully registered");
       }else{
 
-      let redisData = redisClient.get(client.userId+"ANSWERHERO");
+      redisClient.get(client.userId+"ANSWERHERO",(err,redisData)=> {
+        if(redisData){
 
-      if(redisData !== undefined && redisData !== null){
-
-        if(redisData === 'start') {
-          redisClient.set(client.userId+"ANSWERHERO",message.text);
-          return client.replyMessage(
-            replyToken,
-            {
-              type: 'template',
-              altText: 'Confirm alt text',
-              template: {
-                type: 'confirm',
-                text: 'Are you sure want to answer the Hero as ' + message.text + " ?",
-                actions: [
-                  { label: 'Yes', type: 'message', text: 'Yes!' },
-                  { label: 'No', type: 'message', text: 'No!' },
-                ],
-              },
-            });
-        }else {
-          redisClient.del(source.userId+"ANSWERHERO");
-          return replyText(replyToken, "Thanks for your answer, good luck!");
+          if(redisData === 'start') {
+            redisClient.set(client.userId+"ANSWERHERO",message.text);
+            return client.replyMessage(
+              replyToken,
+              {
+                type: 'template',
+                altText: 'Confirm alt text',
+                template: {
+                  type: 'confirm',
+                  text: 'Are you sure want to answer the Hero as ' + message.text + " ?",
+                  actions: [
+                    { label: 'Yes', type: 'message', text: 'Yes!' },
+                    { label: 'No', type: 'message', text: 'No!' },
+                  ],
+                },
+              });
+          }else {
+            redisClient.del(source.userId+"ANSWERHERO");
+            return replyText(replyToken, "Thanks for your answer, good luck!");
+          }
         }
-      }
+      });
       }
 
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyText(replyToken, ["Sorry, I can\'t understand this :'", 
-        "Type 'menu' to open Menu, or 'help' for further assistance : )"]);
+      return replyText(replyToken, ["Sorry, I can\'t understand this :'"]);
     }
   }
 }
