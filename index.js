@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const mongoose = require('mongoose');
-const player = new mongoose.Schema({userId: "string", teamName: "string"});
+const playerSchema = new mongoose.Schema({userId: "string", teamName: "string"});
 // mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr",{ keepAlive: 120 });
 // const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
 // const Answer = mongoose.model('answer', new mongoose.Schema({teamName: "string", answer: [new mongoose.Schema({heroId: "string", heroName: "string",timeStamp:"Number"})]}));
@@ -260,7 +260,7 @@ function handleText(message, replyToken, source) {
           console.log("before connection start");
           mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr").then( () => {
             console.log("succesfully connected");
-              let player = mongoose.model('player',player);
+              let player = mongoose.model('player',playerSchema);
               let query = player.find({userId:source.userId});
               query.exec((err,docs)=> {
                 console.log("succesfully query");
