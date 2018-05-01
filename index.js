@@ -258,11 +258,11 @@ function handleText(message, replyToken, source) {
       if(source.userId) {
         try{
           console.log("before connection start");
-          mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr").then( () => {
+          return mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr").then( () => {
             console.log("succesfully connected");
               let player = mongoose.model('player',playerSchema);
               let query = player.find({userId:source.userId});
-              query.exec((err,docs)=> {
+              return query.exec((err,docs)=> {
                 console.log("succesfully query");
                 mongoose.disconnect();
                 if(docs.length > 0) {
@@ -292,12 +292,12 @@ function handleText(message, replyToken, source) {
               })
           },(err) => {
             console.log(err);
-            replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
+            return replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
           }
           );
         }catch(err) {
           console.log(err);
-          replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
+          return replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
         }
       }
     case 'input keywords':
