@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const mongoose = require('mongoose');
+const player = new mongoose.Schema({userId: "string", teamName: "string"});
 // mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr",{ keepAlive: 120 });
 // const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
 // const Answer = mongoose.model('answer', new mongoose.Schema({teamName: "string", answer: [new mongoose.Schema({heroId: "string", heroName: "string",timeStamp:"Number"})]}));
@@ -256,11 +257,13 @@ function handleText(message, replyToken, source) {
 
       if(source.userId) {
         try{
+          console.log("before connection start");
           mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr").then( () => {
-
-              let player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
+            console.log("succesfully connected");
+              let player = mongoose.model('player',player);
               let query = player.find({userId:source.userId});
               query.exec((err,docs)=> {
+                console.log("succesfully query");
                 mongoose.disconnect();
                 if(docs.length > 0) {
                   return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
