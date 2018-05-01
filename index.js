@@ -256,9 +256,9 @@ function handleText(message, replyToken, source) {
       if(source.userId) {
 
         let existingPlayer = Player.find({userId:source.userId});
-
-        if(existingPlayer) {
-          return replyText(replyToken, ["Melody internal system indicated you already registered to team "+existing.teamName,
+        console.log(existingPlayer);
+        if(existingPlayer.teamName) {
+          return replyText(replyToken, ["Melody internal system indicated you already registered to team "+existingPlayer.teamName,
           "you cant't register to more than 1 team"]);
         }else {
           let trimmed = msgWithData.replace("register team ","");
