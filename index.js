@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const mongoose = require('mongoose');
+mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr");
 const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
 const Answer = mongoose.model('answer', new mongoose.Schema({teamName: "string", answer: [new mongoose.Schema({heroId: "string", heroName: "string",timeStamp:"Number"})]}));
 
@@ -514,7 +515,8 @@ function handlePostBack(replyToken,data,source) {
   }else if(data.indexOf("REGISTERTEAM") > -1) {
     let teamName =  redisClient.get(source.userId+"REGISTERTEAM");
     if(data === 'REGISTERTEAMYES') {
-      return Player.create({userId: source.userId,teamName:teamName},()=> {
+      return Player.create({userId: source.userId,teamName:teamName},(err)=> {
+        console.log(err);
         return replyText(replyToken, ["Registration successfull"]);
       });
     }else {
