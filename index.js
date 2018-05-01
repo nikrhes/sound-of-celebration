@@ -256,36 +256,42 @@ function handleText(message, replyToken, source) {
 
       if(source.userId) {
         try{
-          mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr",{ keepAlive: 120 });
-          let player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
-          let query = player.find({userId:source.userId});
-          query.exec((err,docs)=> {
-            mongoose.disconnect();
-            if(docs.length > 0) {
-              return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
-              "you can't register to more than 1 team"]);
-            }else {
-              let trimmed = msgWithData.replace("register team ","");
-              
-              redisClient.set(source.userId+"REGISTERTEAM",trimmed);
+          mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr").then( () => {
 
-              return client.replyMessage(
-                replyToken,
-                {
-                  type: 'template',
-                  altText: 'Confirm alt text',
-                  template: {
-                    type: 'confirm',
-                    text: 'Are you sure want to register to team ' + trimmed + " ? This cant't be undone.",
-                    actions: [
-                      { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
-                      { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
-                    ],
-                  },
-                });
-              
-            }
-          })
+              let player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
+              let query = player.find({userId:source.userId});
+              query.exec((err,docs)=> {
+                mongoose.disconnect();
+                if(docs.length > 0) {
+                  return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
+                  "you can't register to more than 1 team"]);
+                }else {
+                  let trimmed = msgWithData.replace("register team ","");
+                  
+                  redisClient.set(source.userId+"REGISTERTEAM",trimmed);
+
+                  return client.replyMessage(
+                    replyToken,
+                    {
+                      type: 'template',
+                      altText: 'Confirm alt text',
+                      template: {
+                        type: 'confirm',
+                        text: 'Are you sure want to register to team ' + trimmed + " ? This cant't be undone.",
+                        actions: [
+                          { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
+                          { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
+                        ],
+                      },
+                    });
+                  
+                }
+              })
+          },(err) => {
+            console.log(err);
+            replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
+          }
+          );
         }catch(err) {
           console.log(err);
           replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
