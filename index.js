@@ -7,7 +7,6 @@ const path = require('path');
 const cp = require('child_process');
 const mongoose = require('mongoose');
 mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr");
-const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
 const Answer = mongoose.model('answer', new mongoose.Schema({teamName: "string", answer: [new mongoose.Schema({heroId: "string", heroName: "string",timeStamp:"Number"})]}));
 
 // create LINE SDK config from env variables
@@ -255,7 +254,7 @@ function handleText(message, replyToken, source) {
     case 'register team':
 
       if(source.userId) {
-
+        let Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
         let query = Player.find({userId:source.userId});
         query.exec((err,docs)=> {
           if(docs.length > 0) {
@@ -517,6 +516,7 @@ function handlePostBack(replyToken,data,source) {
       if(teamName) {
         console.log("team Name",teamName);
         if(data === 'REGISTERTEAMYES') {
+          let Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
           return Player.create({userId: source.userId,teamName:teamName},(err)=> {
             console.log(err);
             return replyText(replyToken, ["Registration successfull"]);
