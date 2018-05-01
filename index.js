@@ -259,7 +259,7 @@ function handleText(message, replyToken, source) {
         let query = Player.find({userId:source.userId});
         query.exec((err,docs)=> {
           if(docs[0].teamName) {
-            return replyText(replyToken, ["Melody internal system indicated you already registered to team "+existingPlayer.teamName,
+            return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
             "you cant't register to more than 1 team"]);
           }else {
             let trimmed = msgWithData.replace("register team ","");
@@ -515,6 +515,7 @@ function handlePostBack(replyToken,data,source) {
     return replyText(replyToken, ["Please type your answer!"]);
   }else if(data.indexOf("REGISTERTEAM") > -1) {
     let teamName =  redisClient.get(source.userId+"REGISTERTEAM");
+    console.log("team Name",teamName);
     if(data === 'REGISTERTEAMYES') {
       return Player.create({userId: source.userId,teamName:teamName},(err)=> {
         console.log(err);
