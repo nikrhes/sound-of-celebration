@@ -6,7 +6,8 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
+const Answer = mongoose.model('answer', new mongoose.Schema({teamName: "string", answer: [new mongoose.Schema({heroId: "string", heroName: "string",timeStamp:"Number"})]}));
 
 // create LINE SDK config from env variables
 const config = {
@@ -92,8 +93,8 @@ function handleEvent(event) {
       let data = event.postback.data;
       if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
         data += `(${JSON.stringify(event.postback.params)})`;
-      }else if (data.indexOf('HERO') > -1) {
-        return handlePostBack(event.replyToken,data);
+      }else {
+        return handlePostback(event.replyToken,data,event.source);
       }
       return replyText(event.replyToken, `Got postback: ${data}`);
       // return handlePostBack(data, event.replyToken, event.source);
@@ -125,16 +126,15 @@ function handleEvent(event) {
   }
 }
 
-function handlePostback(data, replyToken, source){
-  return replyText(replyToken, 'asdfasdf');
-}
-
 function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
-  console.log("message data",message);
   var msg = message.text.toLowerCase();
-  console.log("message",msg);
-  storage.push(msg);
+  var msgWithData = "";
+
+  if(msg.indexOf("register team") > -1) {
+    msgWithData = msg;
+    msg = "register team";
+  }
 
   //check if user want to register
 
@@ -170,8 +170,8 @@ function handleText(message, replyToken, source) {
           },
         }
       )
-    case 'music':
-      return handleAudio(message,replyToken);
+    // case 'music':
+    //   return handleAudio(message,replyToken);
     case 'menu':
       return client.replyMessage(
         replyToken,
@@ -252,7 +252,36 @@ function handleText(message, replyToken, source) {
         }
       );
     case 'register team':
-      return replyText(replyToken, "Silahkan masuk kata rahasia yang terdapat pada kartu");
+
+      if(source.userId) {
+
+        let existingPlayer = Player.find({userId:source.userId});
+
+        if(existingPlayer) {
+          return replyText(replyToken, ["Melody internal system indicated you already registered to team "+existing.teamName,
+          "you cant't register to more than 1 team"]);
+        }else {
+          let trimmed = msgWithData.replace("register team ","");
+          
+          redisClient.set(source.userId+"REGISTERTEAM",trimmed);
+
+          return client.replyMessage(
+            replyToken,
+            {
+              type: 'template',
+              altText: 'Confirm alt text',
+              template: {
+                type: 'confirm',
+                text: 'Are you sure want to register to team ' + trimmed + " ? This cant't be undone.",
+                actions: [
+                  { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
+                  { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
+                ],
+              },
+            });
+          
+        }
+      }
     case 'input keywords':
       return replyText(replyToken, "Silahkan masuk kata rahasia yang terdapat pada kartu");
     case 'guess heroes':
@@ -476,12 +505,20 @@ function handleSticker(message, replyToken) {
   );
 }
 
-function handlePostBack(replyToken,data) {
+function handlePostBack(replyToken,data,source) {
   if(data.indexOf("CLUEHERO") > -1) {
     return handleAudio(null, replyToken);
   }else if(data.indexOf("ANSWERHERO") > -1) {
-    redisClient.set(client.userId+"ANSWERHERO","start");
+    redisClient.set(source.userId+"ANSWERHERO","start");
     return replyText(replyToken, ["Please type your answer!"]);
+  }else if(data.indexOf("REGISTERTEAM") > -1) {
+    let teamName =  redisClient.get(source.userId+"REGISTERTEAM");
+    if(data === 'REGISTERTEAMYES') {
+      return Player.create({userId: source.userId,teamName:teamName},()=> {
+        return replyText(replyToken, ["Registration successfull"]);
+      });
+    }
+    redisClient.del(source.userId+"REGISTERTEAM");
   }
 }
 
