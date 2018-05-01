@@ -258,7 +258,7 @@ function handleText(message, replyToken, source) {
 
         let query = Player.find({userId:source.userId});
         query.exec((err,docs)=> {
-          if(docs[0].teamName) {
+          if(docs.length > 0) {
             return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
             "you cant't register to more than 1 team"]);
           }else {
