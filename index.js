@@ -256,32 +256,33 @@ function handleText(message, replyToken, source) {
 
       if(source.userId) {
 
-        let existingPlayer = Player.find({userId:source.userId});
-        console.log(existingPlayer);
-        if(existingPlayer.teamName) {
-          return replyText(replyToken, ["Melody internal system indicated you already registered to team "+existingPlayer.teamName,
-          "you cant't register to more than 1 team"]);
-        }else {
-          let trimmed = msgWithData.replace("register team ","");
-          
-          redisClient.set(source.userId+"REGISTERTEAM",trimmed);
-
-          return client.replyMessage(
-            replyToken,
-            {
-              type: 'template',
-              altText: 'Confirm alt text',
-              template: {
-                type: 'confirm',
-                text: 'Are you sure want to register to team ' + trimmed + " ? This cant't be undone.",
-                actions: [
-                  { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
-                  { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
-                ],
-              },
-            });
-          
-        }
+        let query = Player.find({userId:source.userId});
+        query.exec((err,docs)=> {
+          if(docs[0].teamName) {
+            return replyText(replyToken, ["Melody internal system indicated you already registered to team "+existingPlayer.teamName,
+            "you cant't register to more than 1 team"]);
+          }else {
+            let trimmed = msgWithData.replace("register team ","");
+            
+            redisClient.set(source.userId+"REGISTERTEAM",trimmed);
+  
+            return client.replyMessage(
+              replyToken,
+              {
+                type: 'template',
+                altText: 'Confirm alt text',
+                template: {
+                  type: 'confirm',
+                  text: 'Are you sure want to register to team ' + trimmed + " ? This cant't be undone.",
+                  actions: [
+                    { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
+                    { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
+                  ],
+                },
+              });
+            
+          }
+        })
       }
     case 'input keywords':
       return replyText(replyToken, "Silahkan masuk kata rahasia yang terdapat pada kartu");
@@ -339,7 +340,7 @@ function handleText(message, replyToken, source) {
               },
             });
         }else {
-          redisClient.del(client.userId+"ANSWERHERO");
+          redisClient.del(source.userId+"ANSWERHERO");
           return replyText(replyToken, "Thanks for your answer, good luck!");
         }
       }
