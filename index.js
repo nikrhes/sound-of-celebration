@@ -276,7 +276,9 @@ function handleText(message, replyToken, source) {
                     console.log("succesfully query");
                     if(docs.length > 0) {
                       let clue = mongoose.model('team_clues',teamClueSchema);
-                      return clue.create({teamName:docs[0].teamName,heroId:clueFragment.heroId,clue:trimmed},(err)=> {
+                      console.log(clueFragment);
+                      console.log(clueFragment.heroId);
+                      return clue.create({heroId:clueFragment.heroId,teamName:docs[0].teamName,clue:trimmed},(err)=> {
                         console.log(err);
                         return replyText(replyToken, ["succesfully register the clue"]);
                       });
