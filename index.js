@@ -255,6 +255,7 @@ function handleText(message, replyToken, source) {
                 clueFragment.save(function (err, updatedTank) {
                   if(err) {
                     //do something if error
+                    console.log(err);
                     return replyText(replyToken, ["My bad, Plase try again"]);
                   }
 
