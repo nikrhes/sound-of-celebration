@@ -9,6 +9,8 @@ const mongoose = require('mongoose');
 mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr");
 const playerSchema = new mongoose.Schema({userId: "string", teamName: "string"});
 const clueSchema = new mongoose.Schema({clueFragment: "string", active: "number"});
+const teamClueSchema = new mongoose.Schema({teamName:"string",hero:"string",clue:"string"});
+const answerSchema = new mongoose.Schema({teamName: "string", userId: "string","heroId":"string","heroAnswer":"string","timestamp":"number"});
 // mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr",{ keepAlive: 120 });
 // const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
 // const Answer = mongoose.model('answer', new mongoose.Schema({teamName: "string", answer: [new mongoose.Schema({heroId: "string", heroName: "string",timeStamp:"Number"})]}));
@@ -135,9 +137,15 @@ function handleText(message, replyToken, source) {
   var msg = message.text.toLowerCase();
   var msgWithData = "";
 
-  if(msg.indexOf("register team") > -1) {
+  if(msg.indexOf("player ready, team") > -1) {
     msgWithData = msg;
-    msg = "register team";
+    msg = "player ready, team";
+  }else if(msg.indexOf("we sing") > -1) {
+    msgWithData = msg;
+    msg = "we sing";
+  }else if(msg.indexOf("sticker") > -1) {
+    msgWithData = msg;
+    msg = "sticker";
   }
 
   //check if user want to register
@@ -157,7 +165,19 @@ function handleText(message, replyToken, source) {
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
       }
-    case 'register team':
+    case 'sticker':
+      return client.replyMessage(replyToken, [
+        {
+          "type": "text",
+          "text": "Why?!"
+        },
+        {
+          "type": "sticker",
+          "packageId": "1",
+          "stickerId": "3"
+        }
+      ]);
+    case 'player ready, team':
 
       if(source.userId) {
         try{
@@ -166,10 +186,18 @@ function handleText(message, replyToken, source) {
           return query.exec((err,docs)=> {
             console.log("succesfully query");
             if(docs.length > 0) {
-              return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
-              "you can't register to more than 1 team"]);
+              return client.replyMessage(replyToken, [
+              {
+                "type": "text",
+                "text": "You already registered to team "+ docs[0].teamName
+              },
+              {
+                "type": "sticker",
+                "packageId": "1",
+                "stickerId": "119"
+              }]);
             }else {
-              let trimmed = msgWithData.replace("register team ","");
+              let trimmed = msgWithData.replace("player ready, team ","");
               
               redisClient.set(source.userId+"REGISTERTEAM",trimmed);
 
@@ -191,16 +219,26 @@ function handleText(message, replyToken, source) {
           })
         }catch(err) {
           console.log(err);
-          return replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
+          return client.replyMessage(replyToken, [
+            {
+              "type": "text",
+              "text": "Melody have so many things to do right now, please retry it again in few seconds"
+            },
+            {
+              "type": "sticker",
+              "packageId": "1",
+              "stickerId": "113"
+            }
+          ]);
         }
       }
-    case 'register clue':
+    case 'we sing':
       //add clue for the team
       //we should check if it is valid clue
       //then flag the clue to the team and flag the clue to be unused anymore
       //if clue used or wrong one, return replyText(replyToken, "Sorry wrong clue");
 
-      let trimmed = msgWithData.replace("register clue ","");
+      let trimmed = msgWithData.replace("we sing ","");
 
       if(source.userId) {
         try{
@@ -217,6 +255,7 @@ function handleText(message, replyToken, source) {
                 clueFragment.save(function (err, updatedTank) {
                   if(err) {
                     //do something if error
+                    return replyText(replyToken, ["My bad, Plase try again"]);
                   }
 
                   //update the clue list table of user 
@@ -252,15 +291,15 @@ function handleText(message, replyToken, source) {
       }
 
       return replyText(replyToken, "Clue succesfully registered");
-    case 'guess heroes':
+    case 'player start':
       return createHeroesCarousel(replyToken);
     default: {
 
-      redisClient.get(client.userId+"ANSWERHERO",(err,redisData)=> {
+      redisClient.get(source.userId+"ANSWERHERO",(err,redisData)=> {
         if(redisData){
 
           if(redisData.indexOf("ANSWERHERO") > -1) {
-            redisClient.set(client.userId+"ANSWERHERO",message.text);
+            redisClient.set(source.userId+"ANSWERHERO",redisData.split("|")[1]+"|"+message.text);
             return client.replyMessage(
               replyToken,
               {
@@ -268,10 +307,10 @@ function handleText(message, replyToken, source) {
                 altText: 'Confirm alt text',
                 template: {
                   type: 'confirm',
-                  text: 'Are you sure want to answer the Hero as ' + message.text + " ?",
+                  text: 'Are you sure want to answer Hero '+ redisData.split("|")[1] +' as ' + message.text + " ?",
                   actions: [
-                    { label: 'Yes', type: 'message', text: 'Yes!' },
-                    { label: 'No', type: 'message', text: 'No!' },
+                    { label: 'Yes', type: 'postback', data: "HEROANSWEREDYES", text: 'Yes!' },
+                    { label: 'No', type: 'postback', data: "HEROANSWEREDNO", text: 'No!' },
                   ],
                 },
               });
@@ -284,7 +323,17 @@ function handleText(message, replyToken, source) {
       });
 
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyText(replyToken, ["Sorry, I can\'t understand this :'"]);
+      return replyMessage(replyToken, [
+        {
+          "type": "text",
+          "text": "Don't ask me something that I don't understand!"
+        },
+        {
+          "type": "sticker",
+          "packageId": "1",
+          "stickerId": "102"
+        }
+      ]);
     }
   }
 }
@@ -304,8 +353,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero A',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero A', type: 'postback', data: 'CLUEHEROA'},
-              { label: 'Answer Hero A', type: 'postback', data: 'ANSWERHEROA'}
+              { label: 'Clue Hero A', type: 'postback', data: 'CLUEHERO|A'},
+              { label: 'Answer Hero A', type: 'postback', data: 'ANSWERHERO|A'}
             ],
           },
           {
@@ -313,8 +362,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero B',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero B', type: 'postback', data: 'CLUEHEROB'},
-              { label: 'Answer Hero B', type: 'postback', data: 'ANSWERHEROB'}
+              { label: 'Clue Hero B', type: 'postback', data: 'CLUEHERO|B'},
+              { label: 'Answer Hero B', type: 'postback', data: 'ANSWERHERO|B'}
             ],
           },
           {
@@ -322,8 +371,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero C',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero C', type: 'postback', data: 'CLUEHEROC'},
-              { label: 'Answer Hero C', type: 'postback', data: 'ANSWERHEROC'}
+              { label: 'Clue Hero C', type: 'postback', data: 'CLUEHERO|C'},
+              { label: 'Answer Hero C', type: 'postback', data: 'ANSWERHERO|C'}
             ],
           },
           {
@@ -331,8 +380,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero D',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero D', type: 'postback', data: 'CLUEHEROD'},
-              { label: 'Answer Hero D', type: 'postback', data: 'ANSWERHEROD'}
+              { label: 'Clue Hero D', type: 'postback', data: 'CLUEHERO|D'},
+              { label: 'Answer Hero D', type: 'postback', data: 'ANSWERHERO|D'}
             ],
           },
           {
@@ -340,8 +389,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero E',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero E', type: 'postback', data: 'CLUEHEROE'},
-              { label: 'Answer Hero E', type: 'postback', data: 'ANSWERHEROE'}
+              { label: 'Clue Hero E', type: 'postback', data: 'CLUEHERO|E'},
+              { label: 'Answer Hero E', type: 'postback', data: 'ANSWERHERO|E'}
             ],
           },
           {
@@ -349,8 +398,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero F',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero F', type: 'postback', data: 'CLUECLUEHEROF'},
-              { label: 'Answer Hero F', type: 'postback', data: 'ANSWERHEROF'}
+              { label: 'Clue Hero F', type: 'postback', data: 'CLUECLUEHERO|F'},
+              { label: 'Answer Hero F', type: 'postback', data: 'ANSWERHERO|F'}
             ],
           },
           {
@@ -358,8 +407,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero G',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero G', type: 'postback', data: 'CLUEHEROG'},
-              { label: 'Answer Hero G', type: 'postback', data: 'ANSWERHEROG'}
+              { label: 'Clue Hero G', type: 'postback', data: 'CLUEHERO|G'},
+              { label: 'Answer Hero G', type: 'postback', data: 'ANSWERHERO|G'}
             ],
           },
           {
@@ -367,8 +416,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero H',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero H', type: 'postback', data: 'CLUEHEROH'},
-              { label: 'Answer Hero H', type: 'postback', data: 'ANSWERHEROH'}
+              { label: 'Clue Hero H', type: 'postback', data: 'CLUEHERO|H'},
+              { label: 'Answer Hero H', type: 'postback', data: 'ANSWERHERO|H'}
             ],
           },
           {
@@ -376,8 +425,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero I',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero I', type: 'postback', data: 'HEROI'},
-              { label: 'Answer Hero I', type: 'postback', data: 'ANSWERHEROI'}
+              { label: 'Clue Hero I', type: 'postback', data: 'HERO|I'},
+              { label: 'Answer Hero I', type: 'postback', data: 'ANSWERHERO|I'}
             ],
           },
           {
@@ -385,8 +434,8 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero J',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero J', type: 'postback', data: 'HEROJ'},
-              { label: 'Answer Hero J', type: 'postback', data: 'ANSWERHEROJ'}
+              { label: 'Clue Hero J', type: 'postback', data: 'HERO|J'},
+              { label: 'Answer Hero J', type: 'postback', data: 'ANSWERHERO|J'}
             ],
           },
         ],
@@ -443,12 +492,124 @@ function handleSticker(message, replyToken) {
   );
 }
 
+function handleAnswerAndClues(replyToken,hero,source) {
+  let player = mongoose.model('players',playerSchema);
+  let query = player.find({userId:source.userId});
+  return query.exec((err,docs)=> {
+    console.log("succesfully query");
+    if(docs.length > 0) {
+      let teamClues = mongoose.model('team_clues',teamClueSchema);
+      let query = teamClues.find({teamName:docs[0].teamName});
+      return query.exec((err,docs)=> {
+        if(docs.length > 0){
+          return handleClueFragment(docs.length,hero);
+        }else {
+          //error lol
+        }
+      });
+    }else {
+      //error lol
+    }
+  });
+}
+
+function handleClueFragment(clueCount,hero) {
+
+  let music = null;
+  let image = null;
+  if(clueCount === 1) {
+    music = {
+      type: 'audio',
+      originalContentUrl: baseURL + 'static/music/'+hero+'1.m4a',
+      duration: 15000
+    }
+  }
+  if(clueCount === 2) {
+
+    if(hero === "A"||hero === "B"||hero === "G"||hero === "J") {
+      image = {
+        type: 'image',
+        originalContentUrl: baseURL + '/static/images/'+hero+'_image.png',
+        previewImageUrl: baseURL + '/static/images/'+hero+'_image.png',
+      }
+    }else {
+      image = {
+        type: 'image',
+        originalContentUrl: baseURL + '/static/images/'+hero+'_image.jpg',
+        previewImageUrl: baseURL + '/static/images/'+hero+'_image.jpg',
+      }
+    }
+  }
+  if(clueCount === 3) {
+    music = {
+      type: 'audio',
+      originalContentUrl: baseURL + 'static/music/'+hero+'join.m4a',
+      duration: 15000
+    }
+  }
+
+  if(image === null) {
+    return client.replyMessage(replyToken, [music]);
+  }
+
+  return client.replyMessage(replyToken, [music,image]);
+}
+
 function handlePostBack(replyToken,data,source) {
   if(data.indexOf("CLUEHERO") > -1) {
-    return handleAudio(null, replyToken);
+    return handleAnswerAndClues(replyToken,data.split("|")[1],source);
   }else if(data.indexOf("ANSWERHERO") > -1) {
     redisClient.set(source.userId+"ANSWERHERO",data);
     return replyText(replyToken, ["Please type your answer!"]);
+  }else if (data.indexOf("HEROANSWEREDYES") > -1) {
+
+    redisClient.get(source.userId+"ANSWERHERO",(err,redisData)=> {
+      if(redisData){
+        
+        // save answer to data base
+        //update the clue list table of user 
+        let player = mongoose.model('players',playerSchema);
+        let query = player.find({userId:source.userId});
+        return query.exec((err,docs)=> {
+          console.log("succesfully query");
+          if(docs.length > 0) {
+            let teamAnswer = mongoose.model('team_answers',answerSchema);
+            let date = new Date();
+            return teamAnswer.create({teamName: docs[0].teamName, userId: docs[0].userId,"heroId": redisData.split("|")[0],"heroAnswer":redisData.split("|")[1],"timestamp":date.getMilliseconds},(err)=> {
+              console.log(err);
+              return client.replyMessage(replyToken, [
+                {
+                  "type": "text",
+                  "text": "Good Answer! But I am not sure it is correct anyway..."
+                },
+                {
+                  "type": "sticker",
+                  "packageId": "1",
+                  "stickerId": "10"
+                }
+              ]);
+            });
+          }else {
+            //error plaer not registered
+          }
+        });
+        
+      }
+    });
+
+  }else if (data.indexOf("HEROANSWEREDNO") > -1) {
+    redisClient.set(source.userId+"ANSWERHERO");
+    return client.replyMessage(replyToken, [
+      {
+        "type": "text",
+        "text": "Why?!"
+      },
+      {
+        "type": "sticker",
+        "packageId": "1",
+        "stickerId": "3"
+      }
+    ]);
   }else if(data.indexOf("REGISTERTEAM") > -1) {
     redisClient.get(source.userId+"REGISTERTEAM",(err,teamName)=> {
       if(teamName) {
