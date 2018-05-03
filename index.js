@@ -208,7 +208,7 @@ function handleText(message, replyToken, source) {
                   altText: 'Confirm alt text',
                   template: {
                     type: 'confirm',
-                    text: 'Are you sure want to register as team ' + trimmed + " ? This cant't be undone.",
+                    text: 'Are you sure want to register as team ' + trimmed + " ? This can't be undone.",
                     actions: [
                       { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
                       { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
@@ -247,7 +247,7 @@ function handleText(message, replyToken, source) {
           return query.exec((err,docs)=> {
             console.log("succesfully query");
             if(docs.length > 0) {
-              clueFragment = docs[0];
+              let clueFragment = docs[0];
               if(clueFragment.active === 1) {
                 //clue is not being used
 
