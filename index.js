@@ -256,7 +256,17 @@ function handleText(message, replyToken, source) {
                   if(err) {
                     //do something if error
                     console.log(err);
-                    return replyText(replyToken, ["My bad, Plase try again"]);
+                    return client.replyMessage(replyToken, [
+                      {
+                        "type": "text",
+                        "text": "My bad, please try again..."
+                      },
+                      {
+                        "type": "sticker",
+                        "packageId": "1",
+                        "stickerId": "111"
+                      }
+                    ]);
                   }
 
                   //update the clue list table of user 
