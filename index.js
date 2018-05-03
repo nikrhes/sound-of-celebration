@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr");
 const playerSchema = new mongoose.Schema({userId: "string",userName:"string", teamName: "string"});
 const clueSchema = new mongoose.Schema({clueFragment: "string", active: "number"});
-const teamClueSchema = new mongoose.Schema({teamName:"string",clue:"string",hero:"string"});
+const teamClueSchema = new mongoose.Schema({teamName:"string",clue:"string",heroId:"string"});
 const answerSchema = new mongoose.Schema({teamName: "string", userId: "string",heroId:"string",heroAnswer:"string",timestamp:"number"});
 // mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr",{ keepAlive: 120 });
 // const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
@@ -250,9 +250,7 @@ function handleText(message, replyToken, source) {
               let clueFragment = docs[0];
               console.log(clueFragment.clueFragment);
               console.log(clueFragment.active);
-              console.log(clueFragment.textHero);
-              console.log(clueFragment.hero);
-              console.log(clueFragment._id);
+              console.log(clueFragment.heroId);
               if(clueFragment.active === 1) {
                 //clue is not being used
 
@@ -284,10 +282,9 @@ function handleText(message, replyToken, source) {
                       console.log(clueFragment);
                       console.log(clueFragment.clueFragment);
                       console.log(clueFragment.active);
-                      console.log(clueFragment.textHero);
-                      console.log(clueFragment.hero);
+                      console.log(clueFragment.heroId);
                       console.log(clueFragment._id);
-                      return clue.create({teamName:docs[0].teamName,hero:clueFragment.heroCode,clue:trimmed},(err)=> {
+                      return clue.create({teamName:docs[0].teamName,heroId:clueFragment.heroId,clue:trimmed},(err)=> {
                         console.log(err);
                         return replyText(replyToken, ["succesfully register the clue"]);
                       });
