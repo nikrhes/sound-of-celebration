@@ -6,7 +6,9 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const mongoose = require('mongoose');
+mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr");
 const playerSchema = new mongoose.Schema({userId: "string", teamName: "string"});
+const clueSchema = new mongoose.Schema({clueFragment: "string", active: "number"});
 // mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr",{ keepAlive: 120 });
 // const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
 // const Answer = mongoose.model('answer', new mongoose.Schema({teamName: "string", answer: [new mongoose.Schema({heroId: "string", heroName: "string",timeStamp:"Number"})]}));
@@ -155,190 +157,109 @@ function handleText(message, replyToken, source) {
       } else {
         return replyText(replyToken, 'Bot can\'t use profile API without user ID');
       }
-    
-    case 'confirm':
-      return client.replyMessage(
-        replyToken,
-        {
-          type: 'template',
-          altText: 'Confirm alt text',
-          template: {
-            type: 'confirm',
-            text: 'Do it?',
-            actions: [
-              { label: 'Yes', type: 'message', text: 'Yes!' },
-              { label: 'No', type: 'message', text: 'No!' },
-            ],
-          },
-        }
-      )
-    // case 'music':
-    //   return handleAudio(message,replyToken);
-    case 'menu':
-      return client.replyMessage(
-        replyToken,
-        {
-          type: 'template',
-          altText: 'Main Menu',
-          template: {
-            type: 'carousel',
-            columns: [
-              {
-                thumbnailImageUrl: buttonsImageURL,
-                title: 'Heroes Quest',
-                text: 'Finish to quest to find the missing heroes!',
-                actions: [
-                  { label: 'Start Quest', type: 'postback', data: 'start quest', displayText: 'Start Quest'},
-                ],
-              },
-              {
-                thumbnailImageUrl: buttonsImageURL,
-                title: 'Event Information',
-                text: 'Discover the fun!',
-                actions: [
-                  { label: 'Yes, please!', type: 'postback', data: 'event information', displayText: 'Event Information' },
-                ],
-              },
-            ],
-          },
-        }
-      );
-    case 'image carousel':
-      return client.replyMessage(
-        replyToken,
-        {
-          type: 'template',
-          altText: 'Image carousel alt text',
-          template: {
-            type: 'image_carousel',
-            columns: [
-              {
-                imageUrl: buttonsImageURL,
-                action: { label: 'Go to LINE', type: 'uri', uri: 'https://line.me' },
-              },
-              {
-                imageUrl: buttonsImageURL,
-                action: { label: 'Say hello1', type: 'postback', data: 'hello こんにちは' },
-              },
-              {
-                imageUrl: buttonsImageURL,
-                action: { label: 'Say message', type: 'message', text: 'Rice=米' },
-              },
-              {
-                imageUrl: buttonsImageURL,
-                action: {
-                  label: 'datetime',
-                  type: 'datetimepicker',
-                  data: 'DATETIME',
-                  mode: 'datetime',
-                },
-              },
-            ]
-          },
-        }
-      );
-    case 'imagemap':
-      return client.replyMessage(
-        replyToken,
-        {
-          type: 'imagemap',
-          baseUrl: `${baseURL}/static/rich`,
-          altText: 'Imagemap alt text',
-          baseSize: { width: 1040, height: 1040 },
-          actions: [
-            { area: { x: 0, y: 0, width: 520, height: 520 }, type: 'uri', linkUri: 'https://store.line.me/family/manga/en' },
-            { area: { x: 520, y: 0, width: 520, height: 520 }, type: 'uri', linkUri: 'https://store.line.me/family/music/en' },
-            { area: { x: 0, y: 520, width: 520, height: 520 }, type: 'uri', linkUri: 'https://store.line.me/family/play/en' },
-            { area: { x: 520, y: 520, width: 520, height: 520 }, type: 'message', text: 'URANAI!' },
-          ],
-        }
-      );
     case 'register team':
 
       if(source.userId) {
         try{
-          console.log("before connection start");
-          return mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr").then( () => {
-            console.log("succesfully connected");
-              let player = mongoose.model('player',playerSchema);
-              let query = player.find({userId:source.userId});
-              return query.exec((err,docs)=> {
-                console.log("succesfully query");
-                mongoose.disconnect();
-                if(docs.length > 0) {
-                  return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
-                  "you can't register to more than 1 team"]);
-                }else {
-                  let trimmed = msgWithData.replace("register team ","");
-                  
-                  redisClient.set(source.userId+"REGISTERTEAM",trimmed);
+          let player = mongoose.model('players',playerSchema);
+          let query = player.find({userId:source.userId});
+          return query.exec((err,docs)=> {
+            console.log("succesfully query");
+            if(docs.length > 0) {
+              return replyText(replyToken, ["Melody internal system indicated you already registered to team "+docs[0].teamName,
+              "you can't register to more than 1 team"]);
+            }else {
+              let trimmed = msgWithData.replace("register team ","");
+              
+              redisClient.set(source.userId+"REGISTERTEAM",trimmed);
 
-                  return client.replyMessage(
-                    replyToken,
-                    {
-                      type: 'template',
-                      altText: 'Confirm alt text',
-                      template: {
-                        type: 'confirm',
-                        text: 'Are you sure want to register to team ' + trimmed + " ? This cant't be undone.",
-                        actions: [
-                          { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
-                          { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
-                        ],
-                      },
-                    });
-                  
-                }
-              })
-          },(err) => {
-            console.log(err);
-            return replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
-          }
-          );
+              return client.replyMessage(
+                replyToken,
+                {
+                  type: 'template',
+                  altText: 'Confirm alt text',
+                  template: {
+                    type: 'confirm',
+                    text: 'Are you sure want to register to team ' + trimmed + " ? This cant't be undone.",
+                    actions: [
+                      { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
+                      { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
+                    ],
+                  },
+                });
+            }
+          })
         }catch(err) {
           console.log(err);
           return replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
         }
       }
-    case 'input keywords':
-      return replyText(replyToken, "Silahkan masuk kata rahasia yang terdapat pada kartu");
+    case 'register clue':
+      //add clue for the team
+      //we should check if it is valid clue
+      //then flag the clue to the team and flag the clue to be unused anymore
+      //if clue used or wrong one, return replyText(replyToken, "Sorry wrong clue");
+
+      let trimmed = msgWithData.replace("register clue ","");
+
+      if(source.userId) {
+        try{
+          let clues = mongoose.model('clues',clueSchema);
+          let query = clues.find({clueFragment:trimmed});
+          return query.exec((err,docs)=> {
+            console.log("succesfully query");
+            if(docs.length > 0) {
+              clueFragment = docs[0];
+              if(clueFragment.active === 1) {
+                //clue is not being used
+
+                clueFragment.set({ active: 'false' });
+                clueFragment.save(function (err, updatedTank) {
+                  if(err) {
+                    //do something if error
+                  }
+
+                  //update the clue list table of user 
+                  let player = mongoose.model('players',playerSchema);
+                  let query = player.find({userId:source.userId});
+                  return query.exec((err,docs)=> {
+                    console.log("succesfully query");
+                    if(docs.length > 0) {
+                      let clue = mongoose.model('team_clues',teamClueSchema);
+                      return clue.create({teamName:docs[0].teamName,hero:clueFragment.heroCode,clue:trimmed},(err)=> {
+                        console.log(err);
+                        return replyText(replyToken, ["succesfully register the clue"]);
+                      });
+                    }else {
+                      //error plaer not registered
+                    }
+                  })
+
+                });
+              }
+              else {
+                //the clue was used, sent error to user
+              }
+
+            }else {
+              return replyText(replyToken, ["You entered invalid clue. Please try again."]);
+            }
+          })
+        }catch(err) {
+          console.log(err);
+          return replyText(replyToken, ["Melody have so many things to do right now, please retry it again in few seconds"]);
+        }
+      }
+
+      return replyText(replyToken, "Clue succesfully registered");
     case 'guess heroes':
-      // let hasTeam = false;
-      // for(let g=0; g<storage.length; g++) {
-      //   if(storage[g] == 'profile') {
-      //     hasTeam = true;
-      //     break;
-      //   }
-      // }
-    
-      // if(!hasTeam)
-      //   return replyText(replyToken, "Silahkan masukkan nama team terlebih dahulu (ketik profile)");
-      // else
-      //   return replyText(replyToken, "Silahkan masukkan jawaban kamu.\n INGAT! Kami hanya menerima jawaban pertama ya");
       return createHeroesCarousel(replyToken);
-
-    case 'delete storage':
-      storage = [];
-      return replyText(replyToken, "Storage sudah bersih");
-    case 'list of storage':
-      if(storage.length == 0)
-        return replyText(replyToken, "Tidak ada storage");
-      else
-        return replyText(replyToken, storage);
     default: {
-
-      if(msg.indexOf("clue") === 0) {
-        //add clue for the team
-        //we should check if it is valid clue
-        //then flag the clue to the team and flag the clue to be unused anymore
-        //if clue used or wrong one, return replyText(replyToken, "Sorry wrong clue");
-        return replyText(replyToken, "Clue succesfully registered");
-      }else{
 
       redisClient.get(client.userId+"ANSWERHERO",(err,redisData)=> {
         if(redisData){
 
-          if(redisData === 'start') {
+          if(redisData.indexOf("ANSWERHERO") > -1) {
             redisClient.set(client.userId+"ANSWERHERO",message.text);
             return client.replyMessage(
               replyToken,
@@ -355,12 +276,12 @@ function handleText(message, replyToken, source) {
                 },
               });
           }else {
+            //save the answer into database
             redisClient.del(source.userId+"ANSWERHERO");
             return replyText(replyToken, "Thanks for your answer, good luck!");
           }
         }
       });
-      }
 
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       return replyText(replyToken, ["Sorry, I can\'t understand this :'"]);
@@ -526,14 +447,15 @@ function handlePostBack(replyToken,data,source) {
   if(data.indexOf("CLUEHERO") > -1) {
     return handleAudio(null, replyToken);
   }else if(data.indexOf("ANSWERHERO") > -1) {
-    redisClient.set(source.userId+"ANSWERHERO","start");
+    redisClient.set(source.userId+"ANSWERHERO",data);
     return replyText(replyToken, ["Please type your answer!"]);
   }else if(data.indexOf("REGISTERTEAM") > -1) {
     redisClient.get(source.userId+"REGISTERTEAM",(err,teamName)=> {
       if(teamName) {
         console.log("team Name",teamName);
         if(data === 'REGISTERTEAMYES') {
-          return Player.create({userId: source.userId,teamName:teamName},(err)=> {
+          let players = mongoose.model('players',playerSchema);
+          return players.create({userId: source.userId,teamName:teamName},(err)=> {
             console.log(err);
             return replyText(replyToken, ["Registration successfull"]);
           });
@@ -551,3 +473,111 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
 });
+
+
+
+// case 'confirm':
+//       return client.replyMessage(
+//         replyToken,
+//         {
+//           type: 'template',
+//           altText: 'Confirm alt text',
+//           template: {
+//             type: 'confirm',
+//             text: 'Do it?',
+//             actions: [
+//               { label: 'Yes', type: 'message', text: 'Yes!' },
+//               { label: 'No', type: 'message', text: 'No!' },
+//             ],
+//           },
+//         }
+//       )
+//     // case 'music':
+//     //   return handleAudio(message,replyToken);
+//     case 'menu':
+//       return client.replyMessage(
+//         replyToken,
+//         {
+//           type: 'template',
+//           altText: 'Main Menu',
+//           template: {
+//             type: 'carousel',
+//             columns: [
+//               {
+//                 thumbnailImageUrl: buttonsImageURL,
+//                 title: 'Heroes Quest',
+//                 text: 'Finish to quest to find the missing heroes!',
+//                 actions: [
+//                   { label: 'Start Quest', type: 'postback', data: 'start quest', displayText: 'Start Quest'},
+//                 ],
+//               },
+//               {
+//                 thumbnailImageUrl: buttonsImageURL,
+//                 title: 'Event Information',
+//                 text: 'Discover the fun!',
+//                 actions: [
+//                   { label: 'Yes, please!', type: 'postback', data: 'event information', displayText: 'Event Information' },
+//                 ],
+//               },
+//             ],
+//           },
+//         }
+//       );
+//     case 'image carousel':
+//       return client.replyMessage(
+//         replyToken,
+//         {
+//           type: 'template',
+//           altText: 'Image carousel alt text',
+//           template: {
+//             type: 'image_carousel',
+//             columns: [
+//               {
+//                 imageUrl: buttonsImageURL,
+//                 action: { label: 'Go to LINE', type: 'uri', uri: 'https://line.me' },
+//               },
+//               {
+//                 imageUrl: buttonsImageURL,
+//                 action: { label: 'Say hello1', type: 'postback', data: 'hello こんにちは' },
+//               },
+//               {
+//                 imageUrl: buttonsImageURL,
+//                 action: { label: 'Say message', type: 'message', text: 'Rice=米' },
+//               },
+//               {
+//                 imageUrl: buttonsImageURL,
+//                 action: {
+//                   label: 'datetime',
+//                   type: 'datetimepicker',
+//                   data: 'DATETIME',
+//                   mode: 'datetime',
+//                 },
+//               },
+//             ]
+//           },
+//         }
+//       );
+//     case 'imagemap':
+//       return client.replyMessage(
+//         replyToken,
+//         {
+//           type: 'imagemap',
+//           baseUrl: `${baseURL}/static/rich`,
+//           altText: 'Imagemap alt text',
+//           baseSize: { width: 1040, height: 1040 },
+//           actions: [
+//             { area: { x: 0, y: 0, width: 520, height: 520 }, type: 'uri', linkUri: 'https://store.line.me/family/manga/en' },
+//             { area: { x: 520, y: 0, width: 520, height: 520 }, type: 'uri', linkUri: 'https://store.line.me/family/music/en' },
+//             { area: { x: 0, y: 520, width: 520, height: 520 }, type: 'uri', linkUri: 'https://store.line.me/family/play/en' },
+//             { area: { x: 520, y: 520, width: 520, height: 520 }, type: 'message', text: 'URANAI!' },
+//           ],
+//         }
+//       );
+    // case 'delete storage':
+    //   storage = [];
+    //   return replyText(replyToken, "Storage sudah bersih");
+    // case 'list of storage':
+    //   if(storage.length == 0)
+    //     return replyText(replyToken, "Tidak ada storage");
+    //   else
+    //     return replyText(replyToken, storage);
