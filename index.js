@@ -7,7 +7,7 @@ const path = require('path');
 const cp = require('child_process');
 const mongoose = require('mongoose');
 mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr");
-const playerSchema = new mongoose.Schema({userId: "string", teamName: "string"});
+const playerSchema = new mongoose.Schema({userId: "string",userName:"string", teamName: "string"});
 const clueSchema = new mongoose.Schema({clueFragment: "string", active: "number"});
 const teamClueSchema = new mongoose.Schema({teamName:"string",hero:"string",clue:"string"});
 const answerSchema = new mongoose.Schema({teamName: "string", userId: "string","heroId":"string","heroAnswer":"string","timestamp":"number"});
@@ -323,7 +323,7 @@ function handleText(message, replyToken, source) {
       });
 
       console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyMessage(replyToken, [
+      return client.replyMessage(replyToken, [
         {
           "type": "text",
           "text": "Don't ask me something that I don't understand!"
@@ -611,15 +611,20 @@ function handlePostBack(replyToken,data,source) {
       }
     ]);
   }else if(data.indexOf("REGISTERTEAM") > -1) {
-    redisClient.get(source.userId+"REGISTERTEAM",(err,teamName)=> {
+    return redisClient.get(source.userId+"REGISTERTEAM",(err,teamName)=> {
       if(teamName) {
         console.log("team Name",teamName);
         if(data === 'REGISTERTEAMYES') {
-          let players = mongoose.model('players',playerSchema);
-          return players.create({userId: source.userId,teamName:teamName},(err)=> {
-            console.log(err);
-            return replyText(replyToken, ["Registration successfull"]);
+
+          return client.getProfile(source.userId)
+          .then((profile) => {
+            let players = mongoose.model('players',playerSchema);
+            return players.create({userId: source.userId,teamName:teamName},(err)=> {
+              console.log(err);
+              return replyText(replyToken, ["Registration successfull"]);
+            });
           });
+
         }else {
           return replyText(replyToken, ["Registration canceled"]);
         }
