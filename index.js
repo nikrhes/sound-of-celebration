@@ -276,10 +276,9 @@ function handleText(message, replyToken, source) {
                     console.log("succesfully query");
                     if(docs.length > 0) {
                       let clue = mongoose.model('team_clues',teamClueSchema);
-                      let hero = clueFragment.heroCode;
-                      console.log(clueFragment);
-                      console.log(hero);
-                      return clue.create({teamName:docs[0].teamName,hero:hero,clue:trimmed},(err)=> {
+                      console.log(clueFragment.heroCode);
+                      console.log(clueFragment.clueFragment);
+                      return clue.create({teamName:docs[0].teamName,hero:clueFragment.heroCode,clue:trimmed},(err)=> {
                         console.log(err);
                         return replyText(replyToken, ["succesfully register the clue"]);
                       });
