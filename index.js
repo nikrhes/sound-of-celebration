@@ -10,7 +10,7 @@ mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr"
 const playerSchema = new mongoose.Schema({userId: "string",userName:"string", teamName: "string"});
 const clueSchema = new mongoose.Schema({clueFragment: "string", active: "number"});
 const teamClueSchema = new mongoose.Schema({teamName:"string",hero:"string",clue:"string"});
-const answerSchema = new mongoose.Schema({teamName: "string", userId: "string","heroId":"string","heroAnswer":"string","timestamp":"number"});
+const answerSchema = new mongoose.Schema({teamName: "string", userId: "string",heroId:"string",heroAnswer:"string",timestamp:"number"});
 // mongoose.connect("mongodb://admin:admin@ds251799.mlab.com:51799/heroku_00cdnffr",{ keepAlive: 120 });
 // const Player = mongoose.model('player', new mongoose.Schema({userId: "string", teamName: "string"}));
 // const Answer = mongoose.model('answer', new mongoose.Schema({teamName: "string", answer: [new mongoose.Schema({heroId: "string", heroName: "string",timeStamp:"Number"})]}));
@@ -274,11 +274,10 @@ function handleText(message, replyToken, source) {
                   let query = player.find({userId:source.userId});
                   return query.exec((err,docs)=> {
                     console.log("succesfully query");
-                    console.log(updatedClue);
-                    console.log(clueFragment);
                     if(docs.length > 0) {
                       let clue = mongoose.model('team_clues',teamClueSchema);
-                      return clue.create({teamName:docs[0].teamName,hero:updatedClue.heroCode,clue:trimmed},(err)=> {
+                      let hero = updatedClue.heroCode;
+                      return clue.create({teamName:docs[0].teamName,hero:hero,clue:trimmed},(err)=> {
                         console.log(err);
                         return replyText(replyToken, ["succesfully register the clue"]);
                       });
