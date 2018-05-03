@@ -252,7 +252,7 @@ function handleText(message, replyToken, source) {
                 //clue is not being used
 
                 clueFragment.set({ active: 0 });
-                clueFragment.save(function (err, updatedTank) {
+                clueFragment.save(function (err, updatedClue) {
                   if(err) {
                     //do something if error
                     console.log(err);
@@ -274,9 +274,11 @@ function handleText(message, replyToken, source) {
                   let query = player.find({userId:source.userId});
                   return query.exec((err,docs)=> {
                     console.log("succesfully query");
+                    console.log(updatedClue);
+                    console.log(clueFragment);
                     if(docs.length > 0) {
                       let clue = mongoose.model('team_clues',teamClueSchema);
-                      return clue.create({teamName:docs[0].teamName,hero:clueFragment.heroCode,clue:trimmed},(err)=> {
+                      return clue.create({teamName:docs[0].teamName,hero:updatedClue.heroCode,clue:trimmed},(err)=> {
                         console.log(err);
                         return replyText(replyToken, ["succesfully register the clue"]);
                       });
