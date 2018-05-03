@@ -289,6 +289,18 @@ function handleText(message, replyToken, source) {
               }
               else {
                 //the clue was used, sent error to user
+                client.replyMessage(replyToken, [
+                  {
+                    "type": "text",
+                    "text": "Nice try, but the clue already used..."
+                  },
+                  {
+                    "type": "sticker",
+                    "packageId": "1",
+                    "stickerId": "15"
+                  }
+                ]);
+              }
               }
 
             }else {
