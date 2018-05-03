@@ -208,7 +208,7 @@ function handleText(message, replyToken, source) {
                   altText: 'Confirm alt text',
                   template: {
                     type: 'confirm',
-                    text: 'Are you sure want to register to team ' + trimmed + " ? This cant't be undone.",
+                    text: 'Are you sure want to register as team ' + trimmed + " ? This cant't be undone.",
                     actions: [
                       { label: 'Yes', type: 'postback', data: 'REGISTERTEAMYES' },
                       { label: 'No', type: 'postback', data: 'REGISTERTEAMNO' },
@@ -619,7 +619,7 @@ function handlePostBack(replyToken,data,source) {
           return client.getProfile(source.userId)
           .then((profile) => {
             let players = mongoose.model('players',playerSchema);
-            return players.create({userId: source.userId,teamName:teamName},(err)=> {
+            return players.create({userId: source.userId,userName: profile.displayName,teamName:teamName},(err)=> {
               console.log(err);
               return replyText(replyToken, ["Registration successfull"]);
             });
