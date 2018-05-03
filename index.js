@@ -251,7 +251,7 @@ function handleText(message, replyToken, source) {
               if(clueFragment.active === 1) {
                 //clue is not being used
 
-                clueFragment.set({ active: 'false' });
+                clueFragment.set({ active: 0 });
                 clueFragment.save(function (err, updatedTank) {
                   if(err) {
                     //do something if error
