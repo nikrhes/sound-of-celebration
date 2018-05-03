@@ -289,7 +289,7 @@ function handleText(message, replyToken, source) {
               }
               else {
                 //the clue was used, sent error to user
-                client.replyMessage(replyToken, [
+                return client.replyMessage(replyToken, [
                   {
                     "type": "text",
                     "text": "Nice try, but the clue already used..."
@@ -300,7 +300,6 @@ function handleText(message, replyToken, source) {
                     "stickerId": "15"
                   }
                 ]);
-              }
               }
 
             }else {
