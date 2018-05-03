@@ -248,6 +248,11 @@ function handleText(message, replyToken, source) {
             console.log("succesfully query");
             if(docs.length > 0) {
               let clueFragment = docs[0];
+              console.log(clueFragment.clueFragment);
+              console.log(clueFragment.active);
+              console.log(clueFragment.textHero);
+              console.log(clueFragment.hero);
+              console.log(clueFragment._id);
               if(clueFragment.active === 1) {
                 //clue is not being used
 
@@ -279,7 +284,9 @@ function handleText(message, replyToken, source) {
                       console.log(clueFragment);
                       console.log(clueFragment.clueFragment);
                       console.log(clueFragment.active);
+                      console.log(clueFragment.textHero);
                       console.log(clueFragment.hero);
+                      console.log(clueFragment._id);
                       return clue.create({teamName:docs[0].teamName,hero:clueFragment.heroCode,clue:trimmed},(err)=> {
                         console.log(err);
                         return replyText(replyToken, ["succesfully register the clue"]);
