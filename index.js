@@ -326,12 +326,12 @@ function handleText(message, replyToken, source) {
       return client.replyMessage(replyToken, [
         {
           "type": "text",
-          "text": "Don't ask me something that I don't understand!"
+          "text": "Don't ask me something that I don't understand..."
         },
         {
           "type": "sticker",
           "packageId": "1",
-          "stickerId": "102"
+          "stickerId": "9"
         }
       ]);
     }
