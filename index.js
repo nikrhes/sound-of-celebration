@@ -626,7 +626,7 @@ function handleClueFragment(replyToken,clueCount,hero) {
 
   let music = null;
   let image = null;
-  if(clueCount === 1) {
+  if(clueCount >= 1) {
     music = {
       type: 'audio',
       originalContentUrl: baseURL + 'static/music/'+hero+'1.m4a',
@@ -649,7 +649,7 @@ function handleClueFragment(replyToken,clueCount,hero) {
       }
     }
   }
-  if(clueCount === 3) {
+  if(clueCount >= 3) {
     music = {
       type: 'audio',
       originalContentUrl: baseURL + 'static/music/'+hero+'join.m4a',
