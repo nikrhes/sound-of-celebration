@@ -353,11 +353,12 @@ function handleText(message, replyToken, source) {
                   ],
                 },
               });
-          }else {
-            //save the answer into database
-            redisClient.del(source.userId+"ANSWERHERO");
-            return replyText(replyToken, "Thanks for your answer, good luck!");
           }
+          // else {
+          //   //save the answer into database
+          //   redisClient.del(source.userId+"ANSWERHERO");
+          //   return replyText(replyToken, "Thanks for your answer, good luck!");
+          // }
         }
       });
 
@@ -587,7 +588,7 @@ function handleClueFragment(replyToken,clueCount,hero) {
     music = {
       type: 'audio',
       originalContentUrl: baseURL + 'static/music/'+hero+'1.m4a',
-      duration: 15000
+      duration: 7000
     }
   }
   if(clueCount === 2) {
@@ -641,7 +642,7 @@ function handlePostBack(replyToken,data,source) {
           if(docs.length > 0) {
             let teamAnswer = mongoose.model('team_answers',answerSchema);
             let date = new Date();
-            return teamAnswer.create({teamName: docs[0].teamName, userId: docs[0].userId,"heroId": redisData.split("|")[0],"heroAnswer":redisData.split("|")[1],"timestamp":date.getMilliseconds},(err)=> {
+            return teamAnswer.create({teamName: docs[0].teamName, userId: docs[0].userId,"heroId": redisData.split("|")[0],"heroAnswer":redisData.split("|")[1],"timestamp":date.getMilliseconds()},(err)=> {
               console.log(err);
               return client.replyMessage(replyToken, [
                 {
