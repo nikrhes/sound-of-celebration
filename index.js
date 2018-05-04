@@ -546,7 +546,7 @@ function handleAnswerAndClues(replyToken,hero,source) {
         console.log(err);
         console.log(docs);
         if(docs.length > 0){
-          return handleClueFragment(docs.length,hero);
+          return handleClueFragment(replyToken,docs.length,hero);
         }else {
           //error lol
           return client.replyMessage(replyToken, [
@@ -579,7 +579,7 @@ function handleAnswerAndClues(replyToken,hero,source) {
   });
 }
 
-function handleClueFragment(clueCount,hero) {
+function handleClueFragment(replyToken,clueCount,hero) {
 
   let music = null;
   let image = null;
