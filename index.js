@@ -538,10 +538,32 @@ function handleAnswerAndClues(replyToken,hero,source) {
           return handleClueFragment(docs.length,hero);
         }else {
           //error lol
+          return client.replyMessage(replyToken, [
+            {
+              "type": "text",
+              "text": "you don't have any clue for this hero. What I suppose to do?"
+            },
+            {
+              "type": "sticker",
+              "packageId": "1",
+              "stickerId": "16"
+            }
+          ]);
         }
       });
     }else {
       //error lol
+      return client.replyMessage(replyToken, [
+        {
+          "type": "text",
+          "text": "Sorry, I am sure you have not registered as player."
+        },
+        {
+          "type": "sticker",
+          "packageId": "1",
+          "stickerId": "16"
+        }
+      ]);
     }
   });
 }
