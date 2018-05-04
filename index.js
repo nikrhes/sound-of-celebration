@@ -276,14 +276,23 @@ function handleText(message, replyToken, source) {
                     console.log("succesfully query");
                     if(docs.length > 0) {
                       let clue = mongoose.model('team_clues',teamClueSchema);
-                      console.log(clueFragment);
-                      console.log(clueFragment.heroId);
                       return clue.create({heroId:clueFragment.heroId,teamName:docs[0].teamName,clue:trimmed},(err)=> {
                         console.log(err);
                         return replyText(replyToken, ["succesfully register the clue"]);
                       });
                     }else {
                       //error plaer not registered
+                      return client.replyMessage(replyToken, [
+                        {
+                          "type": "text",
+                          "text": "Sorry you are not registered as player"
+                        },
+                        {
+                          "type": "sticker",
+                          "packageId": "1",
+                          "stickerId": "15"
+                        }
+                      ]);
                     }
                   })
 
@@ -363,7 +372,7 @@ function handleText(message, replyToken, source) {
 }
 
 function createHeroesCarousel(replyToken) {
-  const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
+  const buttonsImageURL = baseURL + 'static/buttons/';
   return client.replyMessage(
     replyToken,
     {
@@ -373,7 +382,7 @@ function createHeroesCarousel(replyToken) {
         type: 'carousel',
         columns: [
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'A.jpg',
             title: 'Musical Hero A',
             text: 'Guess This Hero?',
             actions: [
@@ -382,7 +391,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'B.jpg',
             title: 'Musical Hero B',
             text: 'Guess This Hero?',
             actions: [
@@ -391,7 +400,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'C.jpg',
             title: 'Musical Hero C',
             text: 'Guess This Hero?',
             actions: [
@@ -400,7 +409,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'D.jpg',
             title: 'Musical Hero D',
             text: 'Guess This Hero?',
             actions: [
@@ -409,7 +418,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'E.jpg',
             title: 'Musical Hero E',
             text: 'Guess This Hero?',
             actions: [
@@ -418,7 +427,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'F.jpg',
             title: 'Musical Hero F',
             text: 'Guess This Hero?',
             actions: [
@@ -427,7 +436,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'G.jpg',
             title: 'Musical Hero G',
             text: 'Guess This Hero?',
             actions: [
@@ -436,7 +445,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'H.jpg',
             title: 'Musical Hero H',
             text: 'Guess This Hero?',
             actions: [
@@ -445,7 +454,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'I.jpg',
             title: 'Musical Hero I',
             text: 'Guess This Hero?',
             actions: [
@@ -454,7 +463,7 @@ function createHeroesCarousel(replyToken) {
             ],
           },
           {
-            thumbnailImageUrl: buttonsImageURL,
+            thumbnailImageUrl: buttonsImageURL + 'J.jpg',
             title: 'Musical Hero J',
             text: 'Guess This Hero?',
             actions: [
@@ -523,7 +532,7 @@ function handleAnswerAndClues(replyToken,hero,source) {
     console.log("succesfully query");
     if(docs.length > 0) {
       let teamClues = mongoose.model('team_clues',teamClueSchema);
-      let query = teamClues.find({teamName:docs[0].teamName});
+      let query = teamClues.find({heroId:hero,teamName:docs[0].teamName});
       return query.exec((err,docs)=> {
         if(docs.length > 0){
           return handleClueFragment(docs.length,hero);
