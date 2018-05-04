@@ -326,6 +326,11 @@ function handleText(message, replyToken, source) {
       return replyText(replyToken, "Clue succesfully registered");
     case 'player start':
       return createHeroesCarousel(replyToken);
+
+    case 'yes!':
+      return null;
+    case 'no!':
+      return null;
     default: {
 
       redisClient.get(source.userId+"ANSWERHERO",(err,redisData)=> {
@@ -356,6 +361,7 @@ function handleText(message, replyToken, source) {
       });
 
       console.log(`Echo message to ${replyToken}: ${message.text}`);
+
       return client.replyMessage(replyToken, [
         {
           "type": "text",
@@ -532,8 +538,12 @@ function handleAnswerAndClues(replyToken,hero,source) {
     console.log("succesfully query");
     if(docs.length > 0) {
       let teamClues = mongoose.model('team_clues',teamClueSchema);
+      console.log("hero",hero);
+      console.log("team name",docs[0].teamName);
       let query = teamClues.find({heroId:hero,teamName:docs[0].teamName});
       return query.exec((err,docs)=> {
+        console.log(err);
+        console.log(docs);
         if(docs.length > 0){
           return handleClueFragment(docs.length,hero);
         }else {
