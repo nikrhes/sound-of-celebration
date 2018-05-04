@@ -178,6 +178,8 @@ function handleText(message, replyToken, source) {
           "stickerId": "3"
         }
       ]);
+    case 'event info':
+      return handleMenu(replyToken);
     case 'player ready, team':
 
       if(source.userId) {
@@ -485,6 +487,46 @@ function createHeroesCarousel(replyToken) {
   );
 }
 
+function handleMenu(replyToken) {
+  const buttonsImageURL = baseURL + 'static/images/';
+  return client.replyMessage(
+    replyToken,
+    {
+      type: 'template',
+      altText: 'Heroes Menu',
+      template: {
+        type: 'carousel',
+        columns: [
+          {
+            thumbnailImageUrl: buttonsImageURL + 'logo.png',
+            title: 'Event Information',
+            text: 'Event Rundown',
+            actions: [
+              { label: 'Tell Me!', type: 'postback', data: 'EVENTINFO'}
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL + 'logo.png',
+            title: 'Game Information',
+            text: 'Game Plan',
+            actions: [
+              { label: 'Tell Me!', type: 'postback', data: 'GAMEINFO'}
+            ],
+          },
+          {
+            thumbnailImageUrl: buttonsImageURL + 'logo.png',
+            title: 'Contact Information',
+            text: 'Important Contact',
+            actions: [
+              { label: 'Tell Me!', type: 'postback', data: 'CONTACTINFO'}
+            ],
+          }
+        ],
+      },
+    }
+  );
+}
+
 function handleImage(message, replyToken) {
   // const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
   // const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
@@ -698,6 +740,35 @@ function handlePostBack(replyToken,data,source) {
         redisClient.del(source.userId+"REGISTERTEAM");
       }
     });
+  }else if(data.indexOf("EVENTINFO") > -1) {
+    return client.replyMessage(replyToken, [
+      {
+        type: 'image',
+        originalContentUrl: baseURL + '/static/images/event_rundown.jpg',
+        previewImageUrl: baseURL + '/static/images/event_rundown.jpg',
+      },
+      {
+        type: 'image',
+        originalContentUrl: baseURL + '/static/images/novotel_map.jpg',
+        previewImageUrl: baseURL + '/static/images/novotel_map.jpg',
+      }
+    ]);
+  }else if(data.indexOf("CONTACTINFO") > -1) {
+    return client.replyMessage(replyToken, [
+      {
+        type: 'image',
+        originalContentUrl: baseURL + '/static/images/important_contact.jpg',
+        previewImageUrl: baseURL + '/static/images/important_contact.jpg',
+      }
+    ]);
+  }else if(data.indexOf("GAMEINFO") > -1) {
+    return client.replyMessage(replyToken, [
+      {
+        type: 'image',
+        originalContentUrl: baseURL + '/static/images/game_plan.jpg',
+        previewImageUrl: baseURL + '/static/images/game_plan.jpg',
+      }
+    ]);
   }
 }
 
