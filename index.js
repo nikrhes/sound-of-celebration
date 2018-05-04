@@ -585,11 +585,11 @@ function handleAnswerAndClues(replyToken,hero,source) {
       console.log("hero",hero);
       console.log("team name",docs[0].teamName);
       let query = teamClues.find({heroId:hero,teamName:docs[0].teamName});
-      return query.exec((err,docs)=> {
+      return query.exec((err,clues)=> {
         console.log(err);
-        console.log(docs);
-        if(docs.length > 0){
-          return handleClueFragment(replyToken,docs.length,hero);
+        console.log(clues.length);
+        if(clues.length > 0){
+          return handleClueFragment(replyToken,clues.length,hero);
         }else {
           //error lol
           return client.replyMessage(replyToken, [
