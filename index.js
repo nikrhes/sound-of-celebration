@@ -638,14 +638,14 @@ function handleClueFragment(replyToken,clueCount,hero) {
     if(hero === "A"||hero === "B"||hero === "G"||hero === "J") {
       image = {
         type: 'image',
-        originalContentUrl: baseURL + '/static/images/'+hero+'_image.png',
-        previewImageUrl: baseURL + '/static/images/'+hero+'_image.png',
+        originalContentUrl: baseURL + 'static/images/'+hero+'_image.png',
+        previewImageUrl: baseURL + 'static/images/'+hero+'_image.png',
       }
     }else {
       image = {
         type: 'image',
-        originalContentUrl: baseURL + '/static/images/'+hero+'_image.jpg',
-        previewImageUrl: baseURL + '/static/images/'+hero+'_image.jpg',
+        originalContentUrl: baseURL + 'static/images/'+hero+'_image.jpg',
+        previewImageUrl: baseURL + 'static/images/'+hero+'_image.jpg',
       }
     }
   }
@@ -744,29 +744,29 @@ function handlePostBack(replyToken,data,source) {
     return client.replyMessage(replyToken, [
       {
         type: 'image',
-        originalContentUrl: baseURL + '/static/images/event_rundown.jpg',
-        previewImageUrl: baseURL + '/static/images/event_rundown.jpg',
+        originalContentUrl: baseURL + 'static/images/event_rundown.jpg',
+        previewImageUrl: baseURL + 'static/images/event_rundown.jpg',
       },
       {
         type: 'image',
-        originalContentUrl: baseURL + '/static/images/novotel_map.jpg',
-        previewImageUrl: baseURL + '/static/images/novotel_map.jpg',
+        originalContentUrl: baseURL + 'static/images/novotel_map.jpg',
+        previewImageUrl: baseURL + 'static/images/novotel_map.jpg',
       }
     ]);
   }else if(data.indexOf("CONTACTINFO") > -1) {
     return client.replyMessage(replyToken, [
       {
         type: 'image',
-        originalContentUrl: baseURL + '/static/images/important_contact.jpg',
-        previewImageUrl: baseURL + '/static/images/important_contact.jpg',
+        originalContentUrl: baseURL + 'static/images/important_contact.jpg',
+        previewImageUrl: baseURL + 'static/images/important_contact.jpg',
       }
     ]);
   }else if(data.indexOf("GAMEINFO") > -1) {
     return client.replyMessage(replyToken, [
       {
         type: 'image',
-        originalContentUrl: baseURL + '/static/images/game_plan.jpg',
-        previewImageUrl: baseURL + '/static/images/game_plan.jpg',
+        originalContentUrl: baseURL + 'static/images/game_plan.jpg',
+        previewImageUrl: baseURL + 'static/images/game_plan.jpg',
       }
     ]);
   }
