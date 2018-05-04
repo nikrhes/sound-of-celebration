@@ -464,7 +464,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero I',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero I', type: 'postback', data: 'HERO|I'},
+              { label: 'Clue Hero I', type: 'postback', data: 'CLUEHERO|I'},
               { label: 'Answer Hero I', type: 'postback', data: 'ANSWERHERO|I'}
             ],
           },
@@ -473,7 +473,7 @@ function createHeroesCarousel(replyToken) {
             title: 'Musical Hero J',
             text: 'Guess This Hero?',
             actions: [
-              { label: 'Clue Hero J', type: 'postback', data: 'HERO|J'},
+              { label: 'Clue Hero J', type: 'postback', data: 'CLUEHERO|J'},
               { label: 'Answer Hero J', type: 'postback', data: 'ANSWERHERO|J'}
             ],
           },
