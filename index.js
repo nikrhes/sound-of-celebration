@@ -100,6 +100,7 @@ function handleEvent(event) {
       if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
         data += `(${JSON.stringify(event.postback.params)})`;
       }else {
+        console.log("data",data);
         return handlePostBack(event.replyToken,data,event.source);
       }
       return replyText(event.replyToken, `Got postback: ${data}`);
