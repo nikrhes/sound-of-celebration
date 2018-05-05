@@ -199,17 +199,6 @@ function handleText(message, replyToken, source) {
                 "packageId": "1",
                 "stickerId": "119"
               }]);
-            }else if(docs.length >= 10) {
-              return client.replyMessage(replyToken, [
-              {
-                "type": "text",
-                "text": "there already 10 players in team "+ docs[0].teamName
-              },
-              {
-                "type": "sticker",
-                "packageId": "1",
-                "stickerId": "119"
-              }]);
             }else {
               let trimmed = msgWithData.replace("player ready, team ","");
               
@@ -679,43 +668,45 @@ function handlePostBack(replyToken,data,source) {
   if(data.indexOf("CLUEHERO") > -1) {
     return handleAnswerAndClues(replyToken,data.split("|")[1],source);
   }else if(data.indexOf("ANSWERHERO") > -1) {
-    redisClient.set(source.userId+"ANSWERHERO",data);
-    return replyText(replyToken, ["Please type your answer!"]);
+    // redisClient.set(source.userId+"ANSWERHERO",data);
+    return replyText(replyToken, ["Sorry final game closed"]);
   }else if (data.indexOf("HEROANSWEREDYES") > -1) {
 
-    redisClient.get(source.userId+"ANSWERHERO",(err,redisData)=> {
-      if(redisData){
+    return replyText(replyToken, ["Sorry final game closed"]);
+
+    // redisClient.get(source.userId+"ANSWERHERO",(err,redisData)=> {
+    //   if(redisData){
         
-        // save answer to data base
-        //update the clue list table of user 
-        let player = mongoose.model('players',playerSchema);
-        let query = player.find({userId:source.userId});
-        return query.exec((err,docs)=> {
-          console.log("succesfully query");
-          if(docs.length > 0) {
-            let teamAnswer = mongoose.model('team_answers',answerSchema);
-            let date = new Date();
-            return teamAnswer.create({teamName: docs[0].teamName, userId: docs[0].userId,"heroId": redisData.split("|")[0],"heroAnswer":redisData.split("|")[1],"timestamp":date.getMilliseconds()},(err)=> {
-              console.log(err);
-              return client.replyMessage(replyToken, [
-                {
-                  "type": "text",
-                  "text": "Good Answer! But I am not sure it is correct anyway..."
-                },
-                {
-                  "type": "sticker",
-                  "packageId": "1",
-                  "stickerId": "10"
-                }
-              ]);
-            });
-          }else {
-            //error plaer not registered
-          }
-        });
+    //     // save answer to data base
+    //     //update the clue list table of user 
+    //     let player = mongoose.model('players',playerSchema);
+    //     let query = player.find({userId:source.userId});
+    //     return query.exec((err,docs)=> {
+    //       console.log("succesfully query");
+    //       if(docs.length > 0) {
+    //         let teamAnswer = mongoose.model('team_answers',answerSchema);
+    //         let date = new Date();
+    //         return teamAnswer.create({teamName: docs[0].teamName, userId: docs[0].userId,"heroId": redisData.split("|")[0],"heroAnswer":redisData.split("|")[1],"timestamp":date.getMilliseconds()},(err)=> {
+    //           console.log(err);
+    //           return client.replyMessage(replyToken, [
+    //             {
+    //               "type": "text",
+    //               "text": "Good Answer! But I am not sure it is correct anyway..."
+    //             },
+    //             {
+    //               "type": "sticker",
+    //               "packageId": "1",
+    //               "stickerId": "10"
+    //             }
+    //           ]);
+    //         });
+    //       }else {
+    //         //error plaer not registered
+    //       }
+    //     });
         
-      }
-    });
+    //   }
+    // });
 
   }else if (data.indexOf("HEROANSWEREDNO") > -1) {
     redisClient.set(source.userId+"ANSWERHERO");
