@@ -677,7 +677,8 @@ function handlePostBack(replyToken,data,source) {
     redisClient.get(source.userId+"ANSWERHERO",(err,redisData)=> {
       if(redisData){
         
-        
+      
+
         // save answer to data base
         //update the clue list table of user 
         let player = mongoose.model('players',playerSchema);
