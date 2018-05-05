@@ -199,6 +199,17 @@ function handleText(message, replyToken, source) {
                 "packageId": "1",
                 "stickerId": "119"
               }]);
+            }else if(docs.length >= 10) {
+              return client.replyMessage(replyToken, [
+              {
+                "type": "text",
+                "text": "there already 10 players in team "+ docs[0].teamName
+              },
+              {
+                "type": "sticker",
+                "packageId": "1",
+                "stickerId": "119"
+              }]);
             }else {
               let trimmed = msgWithData.replace("player ready, team ","");
               
